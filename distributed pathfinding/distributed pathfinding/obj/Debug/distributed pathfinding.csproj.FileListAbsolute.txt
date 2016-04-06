@@ -1,0 +1,16 @@
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\bin\Debug\distributed pathfinding.exe.config
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\bin\Debug\distributed pathfinding.exe
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\bin\Debug\distributed pathfinding.pdb
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\distributed pathfinding.csprojResolveAssemblyReference.cache
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\MainWindow.g.cs
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\App.g.cs
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\distributed pathfinding_MarkupCompile.cache
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\distributed pathfinding_MarkupCompile.lref
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\MainWindow.baml
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\distributed pathfinding.g.resources
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\distributed_pathfinding.Properties.Resources.resources
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\distributed pathfinding.csproj.GenerateResource.Cache
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\distributed pathfinding.exe
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\distributed pathfinding.pdb
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\CPUWindow.g.cs
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\CPUWindow.baml
