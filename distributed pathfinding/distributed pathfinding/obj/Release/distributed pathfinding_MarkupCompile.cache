@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Release\
 distributed_pathfinding
 none
 false
-DEBUG;TRACE
+TRACE
 E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\App.xaml
 21549604290
 
-131259114881
-14-648916988
+6885382771
+13738642453
 MainWindow.xaml;CPUWindow.xaml;
 
 False

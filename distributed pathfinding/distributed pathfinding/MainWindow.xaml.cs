@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Diagnostics;
+using distributed_pathfinding.Simulation;
 
 namespace distributed_pathfinding
 {
@@ -24,6 +25,7 @@ namespace distributed_pathfinding
     {
 
         private Window CPUWindow;
+        private SimulationMaster master;
 
         public MainWindow()
         {
@@ -31,6 +33,7 @@ namespace distributed_pathfinding
             InitializeComponent();
             Application.Current.MainWindow.Closing += new CancelEventHandler(mainWindowClosing);
             this.Loaded += new RoutedEventHandler(mainWindowLoaded);
+
             
         }
 
@@ -59,7 +62,6 @@ namespace distributed_pathfinding
         {
             setupCPUWindow();
         }
-   
 
     }
 }

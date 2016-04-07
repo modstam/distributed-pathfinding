@@ -10,12 +10,13 @@
         <ListView x:Name="listView" RenderTransformOrigin="8.955,0.91">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Status" Width="50" DisplayMemberBinding="{Binding Status}" />
-                    <GridViewColumn Header="Owner Name" Width="80" DisplayMemberBinding="{Binding OwnerName}" />
-                    <GridViewColumn Header="Cores" Width="50" DisplayMemberBinding="{Binding Cores}" />
-                    <GridViewColumn Header="Hz" Width="50" DisplayMemberBinding="{Binding Hz}" />
+                    <GridViewColumn Header="Status" Width="50" DisplayMemberBinding="{Binding status}" />
+                    <GridViewColumn Header="Owner Name" Width="80" DisplayMemberBinding="{Binding ownerName}" />
+                    <GridViewColumn Header="LCore" Width="35" DisplayMemberBinding="{Binding numLogicalProcessors}" />
+                    <GridViewColumn Header="Hz" Width="50" DisplayMemberBinding="{Binding cpuFrequency}" />
+                    <GridViewColumn Header="Model" Width="155" DisplayMemberBinding="{Binding cpuModel}" />
                     <GridViewColumn Header="Squares" Width="50" DisplayMemberBinding="{Binding Squares}" />
-                    <GridViewColumn Header="Rate" Width="50" DisplayMemberBinding="{Binding Rate}" />
+                    <GridViewColumn Header="Rate" Width="50" DisplayMemberBinding="{Binding rate}" />
                     
                 </GridView>
             </ListView.View>

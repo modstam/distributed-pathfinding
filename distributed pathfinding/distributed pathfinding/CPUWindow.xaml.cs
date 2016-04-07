@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using distributed_pathfinding.Simulation;
 
 namespace distributed_pathfinding
 {
@@ -27,6 +28,22 @@ namespace distributed_pathfinding
             this.main_window = main;
             WindowStartupLocation = WindowStartupLocation.Manual;
             InitializeComponent();
+
+            populateList();
+
+        }
+
+
+        public void populateList()
+        {
+            CPUManager manager = new CPUManager();
+            CPUInfo hostInfo = manager.getInfo();
+            hostInfo.status = "HOST";
+
+            List<CPUInfo> items = new List<CPUInfo>();
+            items.Add(hostInfo);
+
+            listView.ItemsSource = items;
         }
     }
 }

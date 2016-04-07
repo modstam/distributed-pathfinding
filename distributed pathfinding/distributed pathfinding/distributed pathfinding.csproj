@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -58,6 +59,13 @@
     <Compile Include="CPUWindow.xaml.cs">
       <DependentUpon>CPUWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Simulation\CPUInfo.cs" />
+    <Compile Include="Simulation\CPUManager.cs" />
+    <Compile Include="Simulation\Networking.cs" />
+    <Compile Include="Simulation\Pathfinding.cs" />
+    <Compile Include="Simulation\Simulation.cs" />
+    <Compile Include="Simulation\SimulationMaster.cs" />
+    <Compile Include="Simulation\SystemDelegator.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
