@@ -6,15 +6,10 @@ using System.Threading.Tasks;
 
 namespace distributed_pathfinding.Simulation
 {
-    class Simulation
+    class MapGuard
     {
 
-        Map map;
-
-        public Simulation(Map map)
-        {
-            this.map = map;
-        }
+        //make sync statements so map can be accessed by GUI and simulation
 
     }
 }

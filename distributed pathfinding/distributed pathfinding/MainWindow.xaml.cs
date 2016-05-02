@@ -39,7 +39,7 @@ namespace distributed_pathfinding
 
         public void setupMainWindow()
         {
-            //Nothing for now
+            master = new SimulationMaster(this);
         }
 
 

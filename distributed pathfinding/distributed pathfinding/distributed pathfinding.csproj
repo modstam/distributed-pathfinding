@@ -36,7 +36,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -61,6 +63,7 @@
     </Compile>
     <Compile Include="Simulation\CPUInfo.cs" />
     <Compile Include="Simulation\CPUManager.cs" />
+    <Compile Include="Simulation\Map.cs" />
     <Compile Include="Simulation\Networking.cs" />
     <Compile Include="Simulation\Pathfinding.cs" />
     <Compile Include="Simulation\Simulation.cs" />
@@ -108,7 +111,9 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

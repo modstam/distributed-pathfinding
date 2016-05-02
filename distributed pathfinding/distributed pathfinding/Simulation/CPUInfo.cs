@@ -16,6 +16,7 @@ namespace distributed_pathfinding.Simulation
         public string numLogicalProcessors { get; set; }
         public string squares { get; set; }
         public string rate { get; set; }
+        public string ip { get; set; }
 
         public CPUInfo()
         {
