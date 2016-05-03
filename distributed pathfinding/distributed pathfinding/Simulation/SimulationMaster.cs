@@ -59,6 +59,16 @@ namespace distributed_pathfinding.Simulation
 
         }
 
+        public void stop()
+        {
+            simulation.stop();
+        }
+
+        public void start()
+        {
+            simulation.start();
+        }
+
 
     }
 }
