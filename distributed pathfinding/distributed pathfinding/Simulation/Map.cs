@@ -11,14 +11,14 @@ namespace distributed_pathfinding.Simulation
     class Map
     {
 
-        int[,] map;
+        Actor[ , ] map;
         Bitmap img;
+        Dictionary<int, Actor> agents;
 
 
         public Map()
         {
-
-
+            agents = new Dictionary<int, Actor>();
         }
 
         public void loadMap(string url)
@@ -28,7 +28,8 @@ namespace distributed_pathfinding.Simulation
             try
             {
                 img = new Bitmap(url);
-                map = new int[img.Width,img.Height];
+                map = new Actor[img.Width,img.Height];
+                int id = 0;
 
                 for (int i = 0; i < img.Width; i++)
                 {
@@ -38,15 +39,18 @@ namespace distributed_pathfinding.Simulation
 
                         if (pixel.ToArgb () != -1)
                         {
-                            map[i, j] = 1;
+                            Actor tmp = new Actor(id, i, j, ActorType.Wall);
+                            agents.Add(id, tmp);
+                            map[i, j] = tmp;
+                            ++id;                           
                         }
                         else
                         {
-                            map[i, j] = 0;
-                        }
-                    }
+                            map[i, j] = null;
+                        }                     
+                    }      
                 }
-
+                Debug.WriteLine("Map fully read, num wall pixels: " + id);
             }
             catch (Exception e)
             {
@@ -64,11 +68,6 @@ namespace distributed_pathfinding.Simulation
         public Map getDelemited(int topleft, int bottomright)
         {
             return null;
-        }
-
-        public int getValue(int x, int y)
-        {
-            return map[x, y];
         }
 
         public int getMatrixRowSize()
@@ -89,6 +88,16 @@ namespace distributed_pathfinding.Simulation
         public int getMapHeight()
         {
             return img.Height;
+        }
+
+        public Actor getAgent(int x, int y)
+        {
+            return map[x, y];
+        }
+        
+        public Actor getAgent(int id)
+        {
+            return agents[id];
         }
 
 

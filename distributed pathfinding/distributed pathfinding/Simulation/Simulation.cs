@@ -9,13 +9,19 @@ namespace distributed_pathfinding.Simulation
 {
     class Simulation
     {
-
-        Map map;
+        private int numAgents = 0;
+        private Map map;
         private volatile bool shouldRun;
 
         public Simulation(Map map)
         {
             this.map = map;
+        }
+
+        private void spawnAgents()
+        {
+
+
         }
 
         private void run()
@@ -44,6 +50,13 @@ namespace distributed_pathfinding.Simulation
             shouldRun = true;
             Thread runnerThread = new Thread(run);
             runnerThread.Start();
+        }
+
+        public void setNumAgents(int agents)
+        {
+            stop();
+            numAgents = agents;
+            start();
         }
 
 
