@@ -11,14 +11,15 @@ namespace distributed_pathfinding.Simulation
     class Map
     {
 
-        Actor[ , ] map;
+        Node[ , ] map;
         Bitmap img;
-        Dictionary<int, Actor> agents;
+        Dictionary<int, Agent> agents;
+        Dictionary<int, Node> nodes;
 
 
         public Map()
         {
-            agents = new Dictionary<int, Actor>();
+            agents = new Dictionary<int, Node>();
         }
 
         public void loadMap(string url)
@@ -28,7 +29,7 @@ namespace distributed_pathfinding.Simulation
             try
             {
                 img = new Bitmap(url);
-                map = new Actor[img.Width,img.Height];
+                map = new Node[img.Width,img.Height];
                 int id = 0;
 
                 for (int i = 0; i < img.Width; i++)
@@ -39,15 +40,19 @@ namespace distributed_pathfinding.Simulation
 
                         if (pixel.ToArgb () != -1)
                         {
-                            Actor tmp = new Actor(id, i, j, ActorType.Wall);
-                            agents.Add(id, tmp);
+                            Node tmp = new Node(id, i, j, NodeType.Wall);
+                            nodes[id] = tmp;                        
                             map[i, j] = tmp;
-                            ++id;                           
+                                                     
                         }
                         else
                         {
-                            map[i, j] = null;
-                        }                     
+                            Node tmp = new Node(id, i, j, NodeType.Empty);
+                            nodes[id] = tmp;
+                            map[i, j] = tmp;
+                        }
+
+                        ++id;
                     }      
                 }
                 Debug.WriteLine("Map fully read, num wall pixels: " + id);
@@ -90,12 +95,12 @@ namespace distributed_pathfinding.Simulation
             return img.Height;
         }
 
-        public Actor getAgent(int x, int y)
+        public Node getAgent(int x, int y)
         {
             return map[x, y];
         }
         
-        public Actor getAgent(int id)
+        public Node getAgent(int id)
         {
             return agents[id];
         }

@@ -95,7 +95,7 @@ namespace distributed_pathfinding
                 for (int y = 0; y < map.getMatrixRowSize(); y++)
                 {
                     if (map.getAgent(x, y) == null) continue;
-                    if (map.getAgent(x, y).type == ActorType.Wall) addRect(x, y, 1, 1);
+                    if (map.getAgent(x, y).type == NodeType.Wall) addRect(x, y, 1, 1);
                 }
             }
             

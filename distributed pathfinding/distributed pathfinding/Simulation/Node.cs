@@ -6,21 +6,23 @@ using System.Threading.Tasks;
 
 namespace distributed_pathfinding.Simulation
 {
-    class Actor
+    class Node
     {
         public int id;
         public int x;
         public int y;
-        public ActorType type;     
+        public NodeType type;
+        public Agent agent = null;     
 
-        public Actor(int id, int x, int y, ActorType type)
+        public Node(int id, int x, int y, NodeType type)
         {
             this.id = id;
             this.x = x;
             this.y = y;
             this.type = type;
         }
+
     }
 
-    enum ActorType { Wall, Agent };
+    enum NodeType { Wall, Empty, Agent };
 }
