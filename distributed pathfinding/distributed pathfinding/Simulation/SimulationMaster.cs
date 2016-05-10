@@ -16,6 +16,7 @@ namespace distributed_pathfinding.Simulation
         NameValueCollection settings;
         Window mainWindow;
         Simulation simulation;
+        Map map;
 
 
         public SimulationMaster(Window mainWindow)
@@ -48,7 +49,7 @@ namespace distributed_pathfinding.Simulation
         {
             if (settings["Map"] != null)
             {
-                Map map = new Map();
+                map = new Map();
                 map.loadMap(settings["Map"]);
                 simulation = new Simulation(map);
             }
@@ -67,6 +68,16 @@ namespace distributed_pathfinding.Simulation
         public void start()
         {
             simulation.start();
+        }
+
+        public int getMapWidth()
+        {
+            return map.getMapWidth();
+        }
+
+        public int getMapHeight()
+        {
+            return map.getMapHeight();
         }
 
 

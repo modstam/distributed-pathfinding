@@ -20,7 +20,25 @@ namespace distributed_pathfinding.Simulation
 
         private void spawnAgents()
         {
+            Random rnd = new Random();
+            for(int i = 0; i < numAgents; ++i)
+            {
+               int x = rnd.Next(0, map.getMatrixRowSize());
+               int y = rnd.Next(0, map.getMatrixColumnSize());
 
+                while (map.getNode(x,y).type != NodeType.Empty)
+                {
+                    x = rnd.Next(0, map.getMatrixRowSize());
+                    y = rnd.Next(0, map.getMatrixColumnSize());
+                }
+
+                map.addAgent(i, x, y);
+            }
+
+        }
+
+        private void generateGoal(Node node)
+        {
 
         }
 
@@ -36,7 +54,7 @@ namespace distributed_pathfinding.Simulation
 
         private void syncMap(Map map)
         {
-            MapSync.putProducedMap(map);
+            MapSync.putProducedMap(map.getNodes());
            // Debug.WriteLine("Produced map");
         }
 

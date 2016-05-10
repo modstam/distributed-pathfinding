@@ -14,12 +14,13 @@ namespace distributed_pathfinding.Simulation
         Node[ , ] map;
         Bitmap img;
         Dictionary<int, Agent> agents;
-        Dictionary<int, Node> nodes;
+        List<Node> nodes;
 
 
         public Map()
         {
             agents = new Dictionary<int, Agent>();
+            nodes = new List<Node>();
         }
 
         public void loadMap(string url)
@@ -41,14 +42,14 @@ namespace distributed_pathfinding.Simulation
                         if (pixel.ToArgb () != -1)
                         {
                             Node tmp = new Node(id, i, j, NodeType.Wall);
-                            nodes[id] = tmp;                        
+                            nodes.Add(tmp);                        
                             map[i, j] = tmp;
                                                      
                         }
                         else
                         {
                             Node tmp = new Node(id, i, j, NodeType.Empty);
-                            nodes[id] = tmp;
+                            nodes.Add(tmp);
                             map[i, j] = tmp;
                         }
 
@@ -110,11 +111,57 @@ namespace distributed_pathfinding.Simulation
             return agents[id];
         }
 
+        public Agent getAgent(int x, int y)
+        {
+            if (map[x, y].type == NodeType.Agent) return map[x, y].agent;
+            return null;
+        }
+
         public bool isOpen(int x, int y)
         {
             if (map[x, y].type == NodeType.Empty) return true;
             return false;
         }
+
+        public void addAgent(int id, int x, int y)
+        {
+            if(map[x,y].type == NodeType.Empty)
+            {
+                map[x, y].type = NodeType.Agent;
+                map[x, y].agent = new Agent(id, x, y);
+                agents[id] = map[x, y].agent;
+            }
+        }
+
+        public void moveAgent(int id, int newX, int newY)
+        {
+            agents[id].move(newX, newY);
+
+            map[agents[id].x, agents[id].y].type = NodeType.Empty;
+            map[agents[id].x, agents[id].y].agent = null;
+
+            map[newX, newY].type = NodeType.Agent;
+            map[newX, newY].agent = agents[id];
+        }
+
+        public void moveAgent(int oldX, int oldY, int newX, int newY)
+        {
+            Agent agent = map[oldX, oldY].agent;
+
+            map[oldX,oldY].agent.move(newX, newY);
+
+            map[oldX, oldY].type = NodeType.Empty;
+            map[oldX, oldY].agent = null;
+
+            map[newX, newY].type = NodeType.Agent;
+            map[newX, newY].agent = agent;
+        }
+
+        public List<Node> getNodes()
+        {
+            return nodes;
+        }
+
 
 
     }

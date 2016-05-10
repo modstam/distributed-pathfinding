@@ -62,6 +62,7 @@
     <Compile Include="CPUWindow.xaml.cs">
       <DependentUpon>CPUWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Simulation\Agent.cs" />
     <Compile Include="Simulation\Node.cs" />
     <Compile Include="Simulation\CPUInfo.cs" />
     <Compile Include="Simulation\CPUManager.cs" />

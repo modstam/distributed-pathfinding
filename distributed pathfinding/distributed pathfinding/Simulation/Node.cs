@@ -11,6 +11,8 @@ namespace distributed_pathfinding.Simulation
         public int id;
         public int x;
         public int y;
+        public int goalX;
+        public int goalY;
         public NodeType type;
         public Agent agent = null;     
 
@@ -20,6 +22,12 @@ namespace distributed_pathfinding.Simulation
             this.x = x;
             this.y = y;
             this.type = type;
+        }
+
+        public void setGoal(int x, int y)
+        {
+            this.goalX = x;
+            this.goalY = y;
         }
 
     }

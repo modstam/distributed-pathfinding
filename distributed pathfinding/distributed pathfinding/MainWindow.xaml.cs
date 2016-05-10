@@ -86,18 +86,16 @@ namespace distributed_pathfinding
         private void mainWindowLoaded(object sender, RoutedEventArgs e)
         {
             setupCPUWindow();
-            Map map = MapSync.getProducedMap();
-            setWindowSize(map.getMapHeight() + 100, map.getMapWidth() + 100);
-            setCanvasSize(map.getMapHeight(), map.getMapWidth());
+            List<Node> map = MapSync.getProducedMap();
+            setWindowSize(master.getMapHeight() + 100, master.getMapWidth() + 100);
+            setCanvasSize(master.getMapHeight(), master.getMapWidth());
 
-            for(int x = 0; x < map.getMatrixRowSize(); x++)
+            
+            foreach(Node node in map)
             {
-                for (int y = 0; y < map.getMatrixRowSize(); y++)
-                {
-                    if (map.getAgent(x, y) == null) continue;
-                    if (map.getAgent(x, y).type == NodeType.Wall) addRect(x, y, 1, 1);
-                }
+                if (node.type == NodeType.Wall) addRect(node.x, node.y, 1, 1);
             }
+            
             
         }
 
@@ -106,7 +104,7 @@ namespace distributed_pathfinding
             Debug.WriteLine("Starting mapUpdateThread..");
             while (shouldRun)
             {
-                Map map = MapSync.getProducedMap();
+                List<Node> map = MapSync.getProducedMap();
                // Debug.WriteLine("Acquired map");
             }
             Debug.WriteLine("Map updating stopped...");
