@@ -19,7 +19,7 @@ namespace distributed_pathfinding.Simulation
 
         public Map()
         {
-            agents = new Dictionary<int, Node>();
+            agents = new Dictionary<int, Agent>();
         }
 
         public void loadMap(string url)
@@ -95,14 +95,25 @@ namespace distributed_pathfinding.Simulation
             return img.Height;
         }
 
-        public Node getAgent(int x, int y)
+        public Node getNode(int x, int y)
         {
             return map[x, y];
         }
-        
-        public Node getAgent(int id)
+
+        public Node getNode(int id)
+        {
+            return nodes[id];
+        }
+
+        public Agent getAgent(int id)
         {
             return agents[id];
+        }
+
+        public bool isOpen(int x, int y)
+        {
+            if (map[x, y].type == NodeType.Empty) return true;
+            return false;
         }
 
 

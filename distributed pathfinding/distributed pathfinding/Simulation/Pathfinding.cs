@@ -10,7 +10,7 @@ namespace distributed_pathfinding.Simulation
     {
 
 
-        public List<Node> SimplePath(int startX, int startY, int destX, int destY)
+        public List<Node> SimplePath(Map map, List<Node> nodes, int startX, int startY, int endX, int endY)
         {
             /**
              *	this A* variant was implemented straight off of wikipedias version
@@ -18,44 +18,44 @@ namespace distributed_pathfinding.Simulation
              *
              *  See wiki for more information
             **/
-
-            if (nodes[source].isControlPoint || nodes[destination].isControlPoint)
+            if(map.isOpen(startX, startY) || !map.isOpen(endX,endY))
             {
                 throw new ArgumentException("Cannot use control points as start or goal");
-                return new List<Edge>();
             }
 
+            Node source = map.getNode(startX, startY);
+            Node destination = map.getNode(endX, endY);
 
-            HashSet<int> closedSet = new HashSet<int>();
-            HashSet<int> openSet = new HashSet<int>();
-            openSet.Add(source);
+            HashSet<Node> closedSet = new HashSet<Node>();
+            HashSet<Node> openSet = new HashSet<Node>();
+            openSet.Add(map.getNode(startX,startY));
             int count = 1;
 
-            Dictionary<int, int> cameFrom = new Dictionary<int, int>();
-            Dictionary<int, float> gScore = new Dictionary<int, float>();
-            Dictionary<int, float> fScore = new Dictionary<int, float>();
+            Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>();
+            Dictionary<Node, float> gScore = new Dictionary<Node, float>();
+            Dictionary<Node, float> fScore = new Dictionary<Node, float>();
 
 
 
             //initialize scores with max int values
             for (int i = 0; i < nodes.Count; ++i)
             {
-                if (!nodes[i].isActive) continue;
-                gScore.Add(i, float.MaxValue);
-                fScore.Add(i, float.MaxValue);
+                if (nodes[i].type == NodeType.Wall) continue;
+                gScore.Add(nodes[i], float.MaxValue);
+                fScore.Add(nodes[i], float.MaxValue);
             }
 
-            gScore[source] = 0.0f;
-            fScore[source] = Vector3.Distance(nodes[source].pos, nodes[destination].pos);
+            gScore[map.getNode(startX, startY)] = 0.0f;
+            fScore[map.getNode(startX, startY)] = manhattanDistance(source, destination);
 
 
             while (count > 0)
             {
-                int current = FindLowestScore(fScore);
+                Node current = FindLowestScore(fScore);
                 if (current == destination)
                 {
                     //Debug.Log ("found path from " + source + " to " + destination);
-                    return ConstructPath(cameFrom, current, source);
+                    return ConstructPath(cameFrom, current);
                 }
 
 
@@ -64,17 +64,18 @@ namespace distributed_pathfinding.Simulation
                 --count;
                 closedSet.Add(current);
 
-                foreach (int neighbor in nodes[current].connections)
+                List<Node> neighbours = findNeighbours(current, map, closedSet, openSet); 
+                foreach (Node neighbor in neighbours)
                 {
                     if (closedSet.Contains(neighbor)) continue;
-                    //Debug.Log("checking neighbor " + neighbor);
-                    float tentativeGScore = gScore[current] + Vector3.Distance(nodes[current].pos, nodes[neighbor].pos);
+
+                    float tentativeGScore = gScore[current] + manhattanDistance(current, neighbor);
 
                     if (!openSet.Contains(neighbor) || tentativeGScore < gScore[neighbor])
                     {
                         cameFrom[neighbor] = current;
                         gScore[neighbor] = tentativeGScore;
-                        fScore[neighbor] = tentativeGScore + Vector3.Distance(nodes[neighbor].pos, nodes[destination].pos);
+                        fScore[neighbor] = tentativeGScore + manhattanDistance(neighbor, destination);
                         if (!openSet.Contains(neighbor))
                         {
                             openSet.Add(neighbor);
@@ -85,8 +86,89 @@ namespace distributed_pathfinding.Simulation
 
             }
 
-            return new List<Edge>();
+            return new List<Node>();
         }
+
+
+        private List<Node> ConstructPath(Dictionary<Node, Node> cameFrom, Node current)
+        {
+            List<Node> path = new List<Node>();
+            path.Add(current);
+            while(cameFrom.TryGetValue(cameFrom[current], out current))
+            {
+                path.Add(current);
+            }
+            return path;
+        }
+
+
+        private int manhattanDistance(Node start, Node end)
+        {
+            int distance = Math.Abs(start.x - end.x) + Math.Abs(start.y - end.y);
+            return distance;
+        }
+
+
+        private Node FindLowestScore(Dictionary<Node, float> inMap)
+        {
+            Node lowestNode = null;
+            float lowestValue = float.MaxValue;
+            foreach (KeyValuePair<Node, float> kvp in inMap)
+            {
+                if (kvp.Value < lowestValue)
+                {
+                    lowestValue = kvp.Value;
+                    lowestNode = kvp.Key;
+                }
+            }
+            return lowestNode;
+        }
+
+        private List<Node> findNeighbours(Node node, Map map, HashSet<Node> closedSet, HashSet<Node> openSet)
+        {
+            List<Node> neighbours = new List<Node>();
+            int x = node.x;
+            int y = node.y;
+
+            if (map.isOpen(x + 1, y))
+            {
+                neighbours.Add(map.getNode(x + 1, y));
+            }
+            if (map.isOpen(x - 1, y))
+            {
+                neighbours.Add(map.getNode(x - 1, y));
+            }
+            if (map.isOpen(x, y + 1))
+            {
+                neighbours.Add(map.getNode(x, y + 1));
+            }
+            if (map.isOpen(x, y - 1))
+            {
+                neighbours.Add(map.getNode(x, y - 1));
+            }
+            if (map.isOpen(x - 1, y + 1))
+            {
+                neighbours.Add(map.getNode(x - 1, y + 1));
+            }
+            if (map.isOpen(x + 1, y + 1))
+            {
+                neighbours.Add(map.getNode(x + 1, y + 1));
+            }
+            if (map.isOpen(x + 1, y - 1))
+            {
+                neighbours.Add(map.getNode(x + 1, y - 1));
+            }
+            if (map.isOpen(x - 1, y - 1))
+            {
+                neighbours.Add(map.getNode(x - 1, y - 1));
+            }
+            closedSet.Add(node);
+            openSet.Remove(node);
+
+            return neighbours;
+        }
+
+
 
 
     }
