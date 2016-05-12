@@ -11,6 +11,13 @@ namespace distributed_pathfinding.Simulation
         public int id;
         public int x;
         public int y;
+        public int goalX;
+        public int goalY;
+
+        private bool hasPath = false;
+
+        public List<Node> pathToGoal;
+
 
 
         public Agent(int id,int x, int y)
@@ -24,6 +31,23 @@ namespace distributed_pathfinding.Simulation
         {
             this.x = x;
             this.y = y;
+        }
+
+        public void setGoal(int x, int y)
+        {
+            this.goalX = x;
+            this.goalY = y;
+        }
+
+        public void setPath(List<Node> newPath)
+        {
+            pathToGoal = newPath;
+            hasPath = true;
+        }
+
+        public List<Node> getPath()
+        {
+            return pathToGoal;
         }
 
     }

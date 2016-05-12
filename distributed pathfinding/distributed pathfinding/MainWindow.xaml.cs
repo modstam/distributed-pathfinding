@@ -28,22 +28,21 @@ namespace distributed_pathfinding
         private SimulationMaster master;
         private volatile bool shouldRun = false;
 
-
         public MainWindow()
         {
-            setupMainWindow();
-            InitializeComponent();
+            InitializeComponent();           
             Application.Current.MainWindow.Closing += new CancelEventHandler(mainWindowClosing);
             this.Loaded += new RoutedEventHandler(mainWindowLoaded);
-
-
+            master = new SimulationMaster(this);
+            setupMainWindow();
+            start();
         }
 
         private void setupMainWindow()
-        {
-            master = new SimulationMaster(this);  
-            start();
-                               
+        {    
+            Map map = MapSync.getProducedMap();
+            setWindowSize(master.getMapHeight() + 100, master.getMapWidth() + 100);
+            setUpCanvas(master.getMapHeight(), master.getMapWidth());
         }
 
         private void setWindowSize(int height, int width)
@@ -55,13 +54,16 @@ namespace distributed_pathfinding
             Debug.WriteLine("Resized main window..");
         }
 
-        private void setCanvasSize(int height, int width)
+        private void setUpCanvas(int height, int width)
         {
-
             mapCanvas.Height = height;
             mapCanvas.Width = width;
 
             Debug.WriteLine("Resized canvas window..");
+
+            ImageBrush ib = new ImageBrush();
+            ib.ImageSource = new BitmapImage(new Uri(master.getMapURI(), UriKind.Relative));
+            mapCanvas.Background = ib;
         }
 
 
@@ -86,28 +88,60 @@ namespace distributed_pathfinding
         private void mainWindowLoaded(object sender, RoutedEventArgs e)
         {
             setupCPUWindow();
-            List<Node> map = MapSync.getProducedMap();
-            setWindowSize(master.getMapHeight() + 100, master.getMapWidth() + 100);
-            setCanvasSize(master.getMapHeight(), master.getMapWidth());
-
             
+            /*
             foreach(Node node in map)
             {
                 if (node.type == NodeType.Wall) addRect(node.x, node.y, 1, 1);
-            }
-            
-            
+            } 
+            */              
         }
 
+        
         private void runMap()
         {
-            Debug.WriteLine("Starting mapUpdateThread..");
-            while (shouldRun)
+            Debug.WriteLine("Starting drawing agents..");
+
+            Map map = MapSync.getProducedMap();
+
+            this.Dispatcher.Invoke((Action)(() =>
             {
-                List<Node> map = MapSync.getProducedMap();
-               // Debug.WriteLine("Acquired map");
+                drawAgents(map);
+            }));
+
+            while (shouldRun)
+            {               
+                map = MapSync.getProducedMap();
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    drawAgents(map);
+                }));
+                // Debug.WriteLine("Acquired map");
             }
-            Debug.WriteLine("Map updating stopped...");
+            Debug.WriteLine("Agent drawing stopped...");
+        }
+
+        private void updateAgents(Map map)
+        {
+
+        }
+
+        private void drawAgents(Map map)
+        {
+            var agents = map.getAgents().Values.ToList();
+            foreach(Agent agent in agents)
+            {
+                addRect(agent.x, agent.y, 2, 2, Colors.Black);
+                //Debug.WriteLine("Agent: " + agent.id + " detected ");
+                if(agent.getPath() != null)
+                {
+                    foreach (Node node in agent.getPath())
+                    {
+                        addRect(node.x, node.y, 1, 1, Colors.Red);
+                    }
+                }
+
+            }
         }
         
         private void stop()
@@ -119,21 +153,26 @@ namespace distributed_pathfinding
         private void start()
         {
             shouldRun = true;
-            master.start();
+
             Thread mapUpdateThread = new Thread(runMap);
             mapUpdateThread.Start();
+
+            Thread simulationThread = new Thread(master.start);
+            simulationThread.Start();
         }
 
 
-        private void addRect(double x, double y, int h, int w)
+        private Rectangle addRect(double x, double y, int h, int w, Color color)
         {
             Rectangle rec = new Rectangle();
             Canvas.SetTop(rec, y);
             Canvas.SetLeft(rec, x);
             rec.Width = w;
             rec.Height = h;
-            rec.Fill = new SolidColorBrush(Colors.Red);
-            mapCanvas.Children.Add(rec);
+            rec.Fill = new SolidColorBrush(color);
+            mapCanvas.Children.Add(rec);  
+
+            return rec;
         }
 
 

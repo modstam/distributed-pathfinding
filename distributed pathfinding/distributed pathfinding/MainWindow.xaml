@@ -10,9 +10,8 @@
 
     <Grid>
         <Canvas Name ="mapCanvas" Background="LightGray" HorizontalAlignment="center" Height="649" Margin="0,0,0,0" VerticalAlignment="center" Width="1059">
-            
-    
-        </Canvas>
 
+
+        </Canvas>
     </Grid>
 </Window>

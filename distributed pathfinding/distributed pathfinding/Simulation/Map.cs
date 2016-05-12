@@ -162,6 +162,11 @@ namespace distributed_pathfinding.Simulation
             return nodes;
         }
 
+        public Dictionary<int,Agent> getAgents()
+        {
+            return agents;
+        }
+
 
 
     }

@@ -9,11 +9,11 @@ namespace distributed_pathfinding.Simulation
 {
     class MapSync
     {
-        private static List<Node> nodes = new List<Node>();
+        private static Map map = new Map();
         private static object lockObject = new object();
         private static bool newMap = true;
 
-        public static void putProducedMap(List<Node> source)
+        public static void putProducedMap(Map source)
         {
             lock (lockObject)
             {
@@ -32,7 +32,7 @@ namespace distributed_pathfinding.Simulation
 
                 }
                 */
-                nodes = source;
+                map = source;
                 newMap = true;
                 //Debug.WriteLine("Finished to put map...");
                 Monitor.Pulse(lockObject);
@@ -41,7 +41,7 @@ namespace distributed_pathfinding.Simulation
            
         }
 
-        public static List<Node> getProducedMap()
+        public static Map getProducedMap()
         {
             lock (lockObject)
             {
@@ -60,7 +60,7 @@ namespace distributed_pathfinding.Simulation
                 newMap = false;
                 //Debug.WriteLine("Took map");
                 Monitor.Pulse(lockObject);
-                return nodes;
+                return map;
             }
         }
     }

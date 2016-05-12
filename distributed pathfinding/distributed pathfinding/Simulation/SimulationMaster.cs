@@ -62,11 +62,13 @@ namespace distributed_pathfinding.Simulation
 
         public void stop()
         {
+            Debug.WriteLine("Stopping simulation");
             simulation.stop();
         }
 
         public void start()
         {
+            Debug.WriteLine("Starting simulation");
             simulation.start();
         }
 
@@ -80,6 +82,14 @@ namespace distributed_pathfinding.Simulation
             return map.getMapHeight();
         }
 
+        public string getMapURI()
+        {
+            if (settings["Map"] != null)
+            {
+                return settings["Map"];
+            }
+            return null;
+        }
 
     }
 }
