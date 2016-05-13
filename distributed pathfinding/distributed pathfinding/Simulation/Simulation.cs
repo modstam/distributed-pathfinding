@@ -9,13 +9,16 @@ namespace distributed_pathfinding.Simulation
 {
     class Simulation
     {
-        private int numAgents = 3;
+        private int numAgents = 1000;
+        private int calcDepth = int.MaxValue;
         private Map map;
         private volatile bool shouldRun;
+        private Random rnd;
 
         public Simulation(Map map)
         {
             this.map = map;
+            this.rnd = new Random();
         }
 
         /**
@@ -36,54 +39,63 @@ namespace distributed_pathfinding.Simulation
 
         private void moveAgents()
         {
+            Stopwatch sw = new Stopwatch();
             Dictionary<int,Agent> agents = map.getAgents();
             foreach(Agent agent in agents.Values.ToList())
             {
-                //if the agent has a path calculated, move one step
-                if(agent.getPath() != null && !reachedGoal(agent))
+                sw.Start();
+
+                if (reachedGoal(agent)) 
                 {
-                    takeStep(agent);
-                }
-                else //if the agent has no path, lets calculate one 
-                {
+                    generateGoal(agent);
+                    Debug.WriteLine("new goal is: " + agent.goalX + ", " + agent.goalY + " agent id: " + agent.id);
                     calculatePath(agent);
-                    takeStep(agent);
                 }
+                if(agent.getPath() == null || agent.getPath().Count <= 0) //if the agent has no path, lets calculate one 
+                {                   
+                    calculatePath(agent);
+                }
+                takeStep(agent);
+
+                sw.Stop();
             }
         }
 
         private void calculatePath(Agent agent)
         {
-            List<Node> path = Pathfinding.SimplePath(map, agent.x, agent.y, agent.goalX, agent.goalY);
-            Debug.WriteLine("Calculated path for agent: " + agent.id + " length: " + path.Count);
-            /*
-            foreach(Node node in path)
-            {
-                Debug.WriteLine(node.x + ", " + node.y);
-            }
-            */
+            Pathfinding aStar = new Pathfinding(); 
+            List<Node> path = aStar.SimplePath(map, calcDepth, agent.x, agent.y, agent.goalX, agent.goalY);
+            //Debug.WriteLine("Calculated path for agent: " + agent.id + " length: " + path.Count);
             agent.setPath(path);
         }
 
         private void takeStep(Agent agent)
         {
-            int x = agent.getPath()[0].x;
-            int y = agent.getPath()[0].y;
-            agent.getPath().RemoveAt(0);
+            if(agent.getPath() != null)
+            {
+                int x = agent.getPath()[0].x;
+                int y = agent.getPath()[0].y;
+                agent.getPath().RemoveAt(0);
 
-            //Debug.WriteLine("Moved agent: "+ agent.id + " from ["+ agent.x + "," + agent.y + "] to " + "["+ x + ", " + y + "]");
-            map.moveAgent(agent.id, x, y);
+                //Debug.WriteLine("Moved agent: "+ agent.id + " from ["+ agent.x + "," + agent.y + "] to " + "["+ x + ", " + y + "]");
+                map.moveAgent(agent.id, x, y);
+            }
+
         }
 
         private bool reachedGoal(Agent agent)
         {
-            if(agent.x == agent.goalX && agent.y == agent.goalY) return true;
+            if (agent.x == agent.goalX && agent.y == agent.goalY)
+            {
+                //Debug.WriteLine("Agent " + agent.id + " reached the goal");
+                return true; 
+            }
             return false;
         }
 
         private void spawnAgents()
         {
-            Random rnd = new Random();
+            //rnd = new Random();
             for (int i = 0; i < numAgents; ++i)
             {
                 int x = rnd.Next(0, map.getMatrixRowSize());
@@ -103,7 +115,7 @@ namespace distributed_pathfinding.Simulation
 
         private void generateGoal(Agent agent)
         {
-            Random rnd = new Random(agent.id);
+            //rnd = new Random();
 
             int x = rnd.Next(0, map.getMatrixRowSize());
             int y = rnd.Next(0, map.getMatrixColumnSize());

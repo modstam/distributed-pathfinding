@@ -41,7 +41,7 @@ namespace distributed_pathfinding.Simulation
            
         }
 
-        public static Map getProducedMap()
+        public static List<Agent> getProducedAgents()
         {
             lock (lockObject)
             {
@@ -49,7 +49,7 @@ namespace distributed_pathfinding.Simulation
                 {
                     try
                     {
-                        Monitor.Wait(lockObject);
+                        if(!Monitor.Wait(lockObject,10, true)) return null;
                     }
                     catch (Exception e)
                     {
@@ -59,8 +59,14 @@ namespace distributed_pathfinding.Simulation
                 }
                 newMap = false;
                 //Debug.WriteLine("Took map");
+                List<Agent> agents = new List<Agent>(); 
+                foreach(Agent agent in map.getAgents().Values)
+                {
+                    //Debug.WriteLine("Copy path: " + agent.getCopy().getPath().Count);                  
+                }
+                
                 Monitor.Pulse(lockObject);
-                return map;
+                return agents;
             }
         }
     }

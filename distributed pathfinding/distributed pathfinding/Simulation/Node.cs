@@ -22,7 +22,10 @@ namespace distributed_pathfinding.Simulation
             this.type = type;
         }
 
-
+        public Node getCopy()
+        {
+            return new Node(id, x, y, type);
+        }
 
     }
 

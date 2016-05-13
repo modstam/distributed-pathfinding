@@ -119,7 +119,7 @@ namespace distributed_pathfinding.Simulation
 
         public bool isOpen(int x, int y)
         {
-            if (map[x, y].type == NodeType.Empty) return true;
+            if (map[x, y].type != NodeType.Wall) return true;
             return false;
         }
 
