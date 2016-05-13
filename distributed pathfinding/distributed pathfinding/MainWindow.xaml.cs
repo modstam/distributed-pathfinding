@@ -40,7 +40,7 @@ namespace distributed_pathfinding
 
         private void setupMainWindow()
         {    
-            Map map = MapSync.getProducedMap();
+            List<Agent> agents = MapSync.getProducedAgents();
             setWindowSize(master.getMapHeight() + 100, master.getMapWidth() + 100);
             setUpCanvas(master.getMapHeight(), master.getMapWidth());
         }
@@ -79,7 +79,7 @@ namespace distributed_pathfinding
         private void mainWindowClosing(object sender, CancelEventArgs e)
         {
             //lets close our CPU-window when we close the main window
-           
+            Debug.WriteLine("Closing main window");
             CPUWindow.Close();
             stop();
             Application.Current.Shutdown();   
@@ -102,46 +102,61 @@ namespace distributed_pathfinding
         {
             Debug.WriteLine("Starting drawing agents..");
 
-            Map map = MapSync.getProducedMap();
+            List<Agent> agents = MapSync.getProducedAgents();
+            Dictionary<int, UIElement> rectangles = null;
 
-            this.Dispatcher.Invoke((Action)(() =>
-            {
-                drawAgents(map);
-            }));
 
             while (shouldRun)
-            {               
-                map = MapSync.getProducedMap();
+            {
+                agents = MapSync.getProducedAgents();
                 this.Dispatcher.Invoke((Action)(() =>
                 {
-                    drawAgents(map);
+                    rectangles = updateAgents(agents,rectangles);
                 }));
-                // Debug.WriteLine("Acquired map");
             }
             Debug.WriteLine("Agent drawing stopped...");
         }
 
-        private void updateAgents(Map map)
+        private Dictionary<int, UIElement> updateAgents(List<Agent> agents, Dictionary<int, UIElement> rects)
         {
+            if (agents != null && rects != null)
+            { 
+                foreach(Agent agent in agents)
+                {
+                    Canvas.SetLeft(rects[agent.id], agent.x);
+                    Canvas.SetTop(rects[agent.id], agent.y);
+                }
+            }
+            else if (agents != null && rects == null )
+            {
+                rects = drawAgents(agents);
+            }
 
+            return rects;           
+       
         }
 
-        private void drawAgents(Map map)
+        private Dictionary<int, UIElement> drawAgents(List<Agent> agents)
         {
-            var agents = map.getAgents().Values.ToList();
-            foreach(Agent agent in agents)
+            Dictionary<int, UIElement> elements = new Dictionary<int, UIElement>();
+            if (agents == null) return null;
+            foreach (Agent agent in agents)
             {
-                addRect(agent.x, agent.y, 2, 2, Colors.Black);
+                elements[agent.id] = addRect(agent.x, agent.y, 4, 4, Colors.Red, agent.id);
+
                 //Debug.WriteLine("Agent: " + agent.id + " detected ");
+                /**
                 if(agent.getPath() != null)
                 {
                     foreach (Node node in agent.getPath())
                     {
-                        addRect(node.x, node.y, 1, 1, Colors.Red);
+                        addRect(node.x, node.y, 1, 1, Colors.Red, agent.id);
                     }
                 }
+                **/
 
             }
+            return elements;
         }
         
         private void stop()
@@ -159,12 +174,15 @@ namespace distributed_pathfinding
 
             Thread simulationThread = new Thread(master.start);
             simulationThread.Start();
+
+            
         }
 
 
-        private Rectangle addRect(double x, double y, int h, int w, Color color)
+        private Rectangle addRect(double x, double y, int h, int w, Color color, int id)
         {
             Rectangle rec = new Rectangle();
+            rec.Uid = "" + id;
             Canvas.SetTop(rec, y);
             Canvas.SetLeft(rec, x);
             rec.Width = w;

@@ -62,6 +62,7 @@ namespace distributed_pathfinding.Simulation
                 List<Agent> agents = new List<Agent>(); 
                 foreach(Agent agent in map.getAgents().Values)
                 {
+                    agents.Add(agent.getShallowCopy());
                     //Debug.WriteLine("Copy path: " + agent.getCopy().getPath().Count);                  
                 }
                 

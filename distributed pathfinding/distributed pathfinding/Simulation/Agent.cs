@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace distributed_pathfinding.Simulation
 {
@@ -14,7 +15,7 @@ namespace distributed_pathfinding.Simulation
         public int goalX;
         public int goalY;
 
-        private bool hasPath = false;
+        private bool aquiredPath = false;
 
         public List<Node> pathToGoal;
 
@@ -42,12 +43,26 @@ namespace distributed_pathfinding.Simulation
         public void setPath(List<Node> newPath)
         {
             pathToGoal = newPath;
-            hasPath = true;
+            aquiredPath = true;
         }
 
         public List<Node> getPath()
         {
             return pathToGoal;
+        }
+
+        public bool hasPath()
+        {
+            return aquiredPath;
+        }
+
+        public Agent getShallowCopy()
+        {
+            Agent newAgent = new Agent(id, x, y);
+            newAgent.goalX = this.goalX;
+            newAgent.goalY = this.goalY;
+
+            return newAgent;
         }
 
     }
