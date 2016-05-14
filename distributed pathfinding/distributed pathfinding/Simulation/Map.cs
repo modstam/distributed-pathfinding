@@ -135,26 +135,27 @@ namespace distributed_pathfinding.Simulation
 
         public void moveAgent(int id, int newX, int newY)
         {
-            agents[id].move(newX, newY);
-
+            
             map[agents[id].x, agents[id].y].type = NodeType.Empty;
             map[agents[id].x, agents[id].y].agent = null;
 
             map[newX, newY].type = NodeType.Agent;
             map[newX, newY].agent = agents[id];
+
+            agents[id].move(newX, newY);
         }
 
         public void moveAgent(int oldX, int oldY, int newX, int newY)
         {
             Agent agent = map[oldX, oldY].agent;
-
-            map[oldX,oldY].agent.move(newX, newY);
-
+           
             map[oldX, oldY].type = NodeType.Empty;
             map[oldX, oldY].agent = null;
 
             map[newX, newY].type = NodeType.Agent;
             map[newX, newY].agent = agent;
+
+            map[oldX, oldY].agent.move(newX, newY);
         }
 
         public List<Node> getNodes()

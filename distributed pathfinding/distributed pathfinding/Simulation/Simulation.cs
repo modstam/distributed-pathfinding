@@ -119,11 +119,13 @@ namespace distributed_pathfinding.Simulation
 
             int x = rnd.Next(0, map.getMatrixRowSize());
             int y = rnd.Next(0, map.getMatrixColumnSize());
-
-            while (map.getNode(x, y).type != NodeType.Empty)
+            NodeType type = map.getNode(x, y).type;
+            while (type != NodeType.Empty)
             {
+               
                 x = rnd.Next(0, map.getMatrixRowSize());
                 y = rnd.Next(0, map.getMatrixColumnSize());
+                type = map.getNode(x, y).type;
             }
 
             agent.setGoal(x, y);
