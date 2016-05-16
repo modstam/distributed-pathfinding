@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using distributed_pathfinding.Utility;
 
 namespace distributed_pathfinding.Simulation
 {
@@ -27,23 +28,26 @@ namespace distributed_pathfinding.Simulation
         private void run()
         {
             spawnAgents();
-
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             while (shouldRun)
             {
+               // sw.Start();
                 syncMap(map);
                 moveAgents();
                 Thread.Sleep(100);
+               // Console.WriteLine(sw.Elapsed);
+               // sw.Reset();
             }
-            Debug.WriteLine("Simulating stopped...");
+            
+            Out.WriteLine("Simulating stopped...");
         }
 
         private void moveAgents()
         {
-            Stopwatch sw = new Stopwatch();
             Dictionary<int,Agent> agents = map.getAgents();
             foreach(Agent agent in agents.Values.ToList())
             {
-                sw.Start();
 
                 if (reachedGoal(agent)) 
                 {
@@ -57,7 +61,7 @@ namespace distributed_pathfinding.Simulation
                 }
                 takeStep(agent);
 
-                sw.Stop();
+              
             }
         }
 
@@ -108,7 +112,7 @@ namespace distributed_pathfinding.Simulation
                 }
 
                 map.addAgent(i, x, y);
-                generateGoal(map.getAgent(i));
+                generateGoal(map.getAgent(i));              
                 Debug.WriteLine("added agent at " + x + ", " + y + " with goal at "+ map.getAgent(i).goalX + ", " + map.getAgent(i).goalY);
             }
         }
@@ -152,9 +156,7 @@ namespace distributed_pathfinding.Simulation
 
         public void setNumAgents(int agents)
         {
-            stop();
             numAgents = agents;
-            start();
         }
 
 

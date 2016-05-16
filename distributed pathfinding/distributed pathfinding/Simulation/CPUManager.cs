@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Management;
 using System.Diagnostics;
+using distributed_pathfinding.Utility;
 
 namespace distributed_pathfinding.Simulation
 {
@@ -31,10 +32,10 @@ namespace distributed_pathfinding.Simulation
             }
 
 
-            Debug.WriteLine(info.ownerName);
-            Debug.WriteLine(info.numLogicalProcessors);
-            Debug.WriteLine(info.cpuFrequency);
-            Debug.WriteLine(info.cpuModel);
+            Out.WriteLine(info.ownerName);
+            Out.WriteLine(info.numLogicalProcessors);
+            Out.WriteLine(info.cpuFrequency);
+            Out.WriteLine(info.cpuModel);
             return info;
         }
     }

@@ -14,3 +14,5 @@ E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfindin
 E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\distributed pathfinding.pdb
 E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\CPUWindow.g.cs
 E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\CPUWindow.baml
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\OutputWindow.g.cs
+E:\Github\distributed-pathfinding\distributed pathfinding\distributed pathfinding\obj\Debug\OutputWindow.baml

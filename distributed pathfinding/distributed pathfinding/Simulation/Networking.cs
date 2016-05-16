@@ -9,11 +9,13 @@ namespace distributed_pathfinding.Simulation
     class Networking
     {
         private SystemDelegator delegator;
+        private bool serverMode;
+        private string ipAddress;
 
-        public Networking()
+        public Networking(bool serverMode, string ipAddress)
         {
-
-
+            this.serverMode = serverMode;
+            this.ipAddress = ipAddress; 
         }
 
         public void addCPU()
@@ -27,4 +29,6 @@ namespace distributed_pathfinding.Simulation
             // remove cpu from delegator and cleanup
         }
     }
+
+    enum NetworkMode {Client, Server};
 }

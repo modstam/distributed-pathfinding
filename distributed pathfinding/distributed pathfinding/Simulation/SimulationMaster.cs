@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Diagnostics;
 using System.Collections.Specialized;
+using distributed_pathfinding.Utility;
 
 namespace distributed_pathfinding.Simulation
 {
@@ -17,12 +18,15 @@ namespace distributed_pathfinding.Simulation
         Window mainWindow;
         Simulation simulation;
         Map map;
+        Networking networking;
+        int numAgents=100;
 
 
-        public SimulationMaster(Window mainWindow)
+        public SimulationMaster(Window mainWindow, Networking networking)
         {
-            getConfig();
+            this.networking = networking;
             this.mainWindow = mainWindow;
+            getConfig();
             initiateSimulation();
            
         }
@@ -34,13 +38,13 @@ namespace distributed_pathfinding.Simulation
             {
                 foreach (var key in settings.AllKeys)
                 {
-                    Debug.WriteLine("Loading settings....");
-                    Debug.WriteLine(key + "=" + settings[key]);
+                    Out.WriteLine("Loading settings....");
+                    Out.WriteLine(key + "=" + settings[key]);
                     
                 }
-                Debug.WriteLine("Loading settings complete.");
+                Out.WriteLine("Loading settings complete.");
             }
-            else Debug.WriteLine("Warning: Config was not loaded---");
+            else Out.WriteLine("Warning: Config was not loaded---");
 
         }
 
@@ -52,23 +56,25 @@ namespace distributed_pathfinding.Simulation
                 map = new Map();
                 map.loadMap(settings["Map"]);
                 simulation = new Simulation(map);
+                simulation.setNumAgents(numAgents);
             }
             else
             {
-                Debug.WriteLine("Could not read map");
+                Out.WriteLine("Could not read map");
             }
 
         }
 
         public void stop()
         {
-            Debug.WriteLine("Stopping simulation");
+            Out.WriteLine("Stopping simulation");
             simulation.stop();
         }
 
         public void start()
         {
-            Debug.WriteLine("Starting simulation");
+            Out.WriteLine("Starting simulation");
+            map.resetMap();
             simulation.start();
         }
 
@@ -89,6 +95,12 @@ namespace distributed_pathfinding.Simulation
                 return settings["Map"];
             }
             return null;
+        }
+
+        public void setNumAgents(int numAgents)
+        {
+            this.numAgents = numAgents;
+            simulation.setNumAgents(numAgents);
         }
 
     }

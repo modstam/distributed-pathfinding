@@ -8,10 +8,23 @@
         Title="Simulation"  Height="800" Width="800"
         Name ="mainWindow">
 
+
+
+
     <Grid>
-        <Canvas Name ="mapCanvas" Background="LightGray" HorizontalAlignment="center" Height="649" Margin="0,0,0,0" VerticalAlignment="center" Width="1059">
+        <Grid Margin="0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Height="55">
+            <TextBox x:Name="numAgents" HorizontalAlignment="Left" Height="23" Margin="10,25,140,0" TextWrapping="Wrap" Text="numAgents" VerticalAlignment="Top" Width="120" TextChanged="numAgents_TextChanged"/>
+            <Button x:Name="startButton" Content="Start/Stop" HorizontalAlignment="Left" Margin="140,25,10,0" VerticalAlignment="Top" Width="74" Click="startButton_Click"/>
+        </Grid>
+        <Grid Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Canvas Name ="mapCanvas" Background="LightGray" HorizontalAlignment="center" Height="649" Margin="0,0,0,10" VerticalAlignment="center" Width="1059"></Canvas>
+        </Grid>
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Height="55" Margin="0,10,0,0">
+            <TextBox x:Name="ipTextBox" HorizontalAlignment="Left" Height="22" Margin="10,0,166,28" TextWrapping="Wrap" Text="Ip Address" VerticalAlignment="Bottom" Width="120"/>
+            <Button x:Name="submitIpButton"  Content="Submit" HorizontalAlignment="Left" Margin="140,0,10,30" VerticalAlignment="Bottom" Width="74" Click="submitIpButton_Click"/>
+            <CheckBox x:Name="modeCheckBox" Content="ServerMode" HorizontalAlignment="Left" Margin="250,0,10,32" VerticalAlignment="Bottom" Checked="modeCheckBox_Checked"/>
+        </Grid>
+        
 
-
-        </Canvas>
     </Grid>
 </Window>

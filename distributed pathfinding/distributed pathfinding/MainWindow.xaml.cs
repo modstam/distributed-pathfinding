@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Diagnostics;
 using distributed_pathfinding.Simulation;
+using System.Net;
+using distributed_pathfinding.Utility;
 
 namespace distributed_pathfinding
 {
@@ -25,23 +27,56 @@ namespace distributed_pathfinding
     {
 
         private Window CPUWindow;
+        private Window outputWindow;
         private SimulationMaster master;
         private volatile bool shouldRun = false;
+        private bool serverMode = false;
+        private string ipAddress = "127.0.0.1";
+        private Networking networking;
+        private bool cpuWindow = true;
+        private bool output = true;
 
         public MainWindow()
         {
             InitializeComponent();           
             Application.Current.MainWindow.Closing += new CancelEventHandler(mainWindowClosing);
             this.Loaded += new RoutedEventHandler(mainWindowLoaded);
-            master = new SimulationMaster(this);
             setupMainWindow();
-            start();
+            
+        }
+
+
+        private void runMap()
+        {
+            Out.WriteLine("Starting drawing agents..");
+
+            List<Agent> agents = MapSync.getProducedAgents();
+            Dictionary<int, UIElement> rectangles = null;
+
+
+            while (shouldRun)
+            {
+                agents = MapSync.getProducedAgents();
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    rectangles = updateAgents(agents, rectangles);
+                }));
+            }
+
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                disposeAgents();
+            }));
+
+            Out.WriteLine("Agent drawing stopped...");
         }
 
         private void setupMainWindow()
-        {    
+        {
+            this.networking = new Networking(serverMode, ipAddress);
+            master = new SimulationMaster(this, this.networking);
             List<Agent> agents = MapSync.getProducedAgents();
-            setWindowSize(master.getMapHeight() + 100, master.getMapWidth() + 100);
+            setWindowSize(master.getMapHeight() + 200, master.getMapWidth() + 100);
             setUpCanvas(master.getMapHeight(), master.getMapWidth());
         }
 
@@ -51,15 +86,16 @@ namespace distributed_pathfinding
             Application.Current.MainWindow.Height = height;
             Application.Current.MainWindow.Width = width;
 
-            Debug.WriteLine("Resized main window..");
+            Out.WriteLine("Resized main window..");
         }
+        
 
         private void setUpCanvas(int height, int width)
         {
             mapCanvas.Height = height;
             mapCanvas.Width = width;
 
-            Debug.WriteLine("Resized canvas window..");
+            Out.WriteLine("Resized canvas window..");
 
             ImageBrush ib = new ImageBrush();
             ib.ImageSource = new BitmapImage(new Uri(master.getMapURI(), UriKind.Relative));
@@ -76,10 +112,18 @@ namespace distributed_pathfinding
             CPUWindow.Show();
         }
 
+        private void setupOutputWindow()
+        {
+            outputWindow = new OutputWindow();
+            outputWindow.Left = Application.Current.MainWindow.Left + Application.Current.MainWindow.ActualWidth;
+            outputWindow.Top = Application.Current.MainWindow.Top;
+            outputWindow.Show();
+        }
+
         private void mainWindowClosing(object sender, CancelEventArgs e)
         {
             //lets close our CPU-window when we close the main window
-            Debug.WriteLine("Closing main window");
+            Out.WriteLine("Closing main window");
             CPUWindow.Close();
             stop();
             Application.Current.Shutdown();   
@@ -88,33 +132,13 @@ namespace distributed_pathfinding
         private void mainWindowLoaded(object sender, RoutedEventArgs e)
         {
             setupCPUWindow();
-            
-            /*
-            foreach(Node node in map)
-            {
-                if (node.type == NodeType.Wall) addRect(node.x, node.y, 1, 1);
-            } 
-            */              
+            setupOutputWindow();                        
         }
 
-        
-        private void runMap()
+
+        private void disposeAgents()
         {
-            Debug.WriteLine("Starting drawing agents..");
-
-            List<Agent> agents = MapSync.getProducedAgents();
-            Dictionary<int, UIElement> rectangles = null;
-
-
-            while (shouldRun)
-            {
-                agents = MapSync.getProducedAgents();
-                this.Dispatcher.Invoke((Action)(() =>
-                {
-                    rectangles = updateAgents(agents,rectangles);
-                }));
-            }
-            Debug.WriteLine("Agent drawing stopped...");
+            mapCanvas.Children.Clear();
         }
 
         private Dictionary<int, UIElement> updateAgents(List<Agent> agents, Dictionary<int, UIElement> rects)
@@ -143,17 +167,6 @@ namespace distributed_pathfinding
             foreach (Agent agent in agents)
             {
                 elements[agent.id] = addRect(agent.x, agent.y, 4, 4, Colors.Red, agent.id);
-
-                //Debug.WriteLine("Agent: " + agent.id + " detected ");
-                /**
-                if(agent.getPath() != null)
-                {
-                    foreach (Node node in agent.getPath())
-                    {
-                        addRect(node.x, node.y, 1, 1, Colors.Red, agent.id);
-                    }
-                }
-                **/
 
             }
             return elements;
@@ -193,6 +206,37 @@ namespace distributed_pathfinding
             return rec;
         }
 
+        private void submitIpButton_Click(object sender, RoutedEventArgs e)
+        {
+            IPAddress address;
+            if (IPAddress.TryParse(ipTextBox.Text, out address))
+            {
+                Out.WriteLine("Valid ip adress entered: " + address.ToString());
+            }
+            else Out.WriteLine("Invalid ip adress entered: " + ipTextBox.Text);
+        }
 
+        private void modeCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void numAgents_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textBox = sender as TextBox;
+            int result;
+            if (int.TryParse(textBox.Text, out result))
+            {
+                master.setNumAgents(result);
+                Out.WriteLine("Changed num agents to: " + result);
+            }
+        }
+
+        private void startButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!shouldRun) start();
+            else stop();
+
+        }
     }  
 }

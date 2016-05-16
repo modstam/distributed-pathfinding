@@ -62,6 +62,9 @@
     <Compile Include="CPUWindow.xaml.cs">
       <DependentUpon>CPUWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="OutputWindow.xaml.cs">
+      <DependentUpon>OutputWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Simulation\Agent.cs" />
     <Compile Include="Simulation\Node.cs" />
     <Compile Include="Simulation\CPUInfo.cs" />
@@ -73,6 +76,7 @@
     <Compile Include="Simulation\Simulation.cs" />
     <Compile Include="Simulation\SimulationMaster.cs" />
     <Compile Include="Simulation\SystemDelegator.cs" />
+    <Compile Include="Utility\TextBoxOutputter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -86,6 +90,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="CPUWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="OutputWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

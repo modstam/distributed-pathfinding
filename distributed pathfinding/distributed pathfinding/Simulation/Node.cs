@@ -27,6 +27,12 @@ namespace distributed_pathfinding.Simulation
             return new Node(id, x, y, type);
         }
 
+        public void reset()
+        {
+            if(type == NodeType.Agent) type = NodeType.Empty;
+            agent = null;
+        }
+
     }
 
     enum NodeType { Wall, Empty, Agent };

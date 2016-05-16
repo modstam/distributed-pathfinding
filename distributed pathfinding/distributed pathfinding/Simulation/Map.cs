@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Diagnostics;
+using distributed_pathfinding.Utility;
 
 namespace distributed_pathfinding.Simulation
 {
@@ -26,7 +27,7 @@ namespace distributed_pathfinding.Simulation
         public void loadMap(string url)
         {
 
-            Debug.WriteLine("Current folder is " + System.AppDomain.CurrentDomain.BaseDirectory);
+            Out.WriteLine("Current folder is " + System.AppDomain.CurrentDomain.BaseDirectory);
             try
             {
                 img = new Bitmap(url);
@@ -56,11 +57,11 @@ namespace distributed_pathfinding.Simulation
                         ++id;
                     }      
                 }
-                Debug.WriteLine("Map fully read, num wall pixels: " + id);
+                Out.WriteLine("Map fully read, num wall pixels: " + id);
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                Out.WriteLine(e.ToString());
             }
            
         }
@@ -166,6 +167,15 @@ namespace distributed_pathfinding.Simulation
         public Dictionary<int,Agent> getAgents()
         {
             return agents;
+        }
+        
+        public void resetMap()
+        {
+            agents = new Dictionary<int, Agent>();
+            foreach(Node node in nodes)
+            {
+                node.reset();
+            }
         }
 
 
