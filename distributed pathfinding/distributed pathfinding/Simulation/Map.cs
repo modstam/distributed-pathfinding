@@ -27,7 +27,7 @@ namespace distributed_pathfinding.Simulation
         public void loadMap(string url)
         {
 
-            Out.WriteLine("Current folder is " + System.AppDomain.CurrentDomain.BaseDirectory);
+            Out.put("Current folder is " + System.AppDomain.CurrentDomain.BaseDirectory);
             try
             {
                 img = new Bitmap(url);
@@ -57,11 +57,11 @@ namespace distributed_pathfinding.Simulation
                         ++id;
                     }      
                 }
-                Out.WriteLine("Map fully read, num wall pixels: " + id);
+                Out.put("Map fully read, num wall pixels: " + id);
             }
             catch (Exception e)
             {
-                Out.WriteLine(e.ToString());
+                Out.put(e.ToString());
             }
            
         }

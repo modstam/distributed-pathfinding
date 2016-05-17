@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Collections.Specialized;
 using distributed_pathfinding.Utility;
+using distributed_pathfinding.Networking;
 
 namespace distributed_pathfinding.Simulation
 {
@@ -18,13 +19,13 @@ namespace distributed_pathfinding.Simulation
         Window mainWindow;
         Simulation simulation;
         Map map;
-        Networking networking;
+        Network network;
         int numAgents=100;
 
 
-        public SimulationMaster(Window mainWindow, Networking networking)
+        public SimulationMaster(Window mainWindow, Network network)
         {
-            this.networking = networking;
+            this.network = network;
             this.mainWindow = mainWindow;
             getConfig();
             initiateSimulation();
@@ -38,13 +39,13 @@ namespace distributed_pathfinding.Simulation
             {
                 foreach (var key in settings.AllKeys)
                 {
-                    Out.WriteLine("Loading settings....");
-                    Out.WriteLine(key + "=" + settings[key]);
+                    Out.put("Loading settings....");
+                    Out.put(key + "=" + settings[key]);
                     
                 }
-                Out.WriteLine("Loading settings complete.");
+                Out.put("Loading settings complete.");
             }
-            else Out.WriteLine("Warning: Config was not loaded---");
+            else Out.put("Warning: Config was not loaded---");
 
         }
 
@@ -60,20 +61,20 @@ namespace distributed_pathfinding.Simulation
             }
             else
             {
-                Out.WriteLine("Could not read map");
+                Out.put("Could not read map");
             }
 
         }
 
         public void stop()
         {
-            Out.WriteLine("Stopping simulation");
+            Out.put("Stopping simulation");
             simulation.stop();
         }
 
         public void start()
         {
-            Out.WriteLine("Starting simulation");
+            Out.put("Starting simulation");
             map.resetMap();
             simulation.start();
         }

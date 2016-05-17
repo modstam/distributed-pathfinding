@@ -41,6 +41,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -62,20 +63,22 @@
     <Compile Include="CPUWindow.xaml.cs">
       <DependentUpon>CPUWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Networking\RemoteWorker.cs" />
     <Compile Include="OutputWindow.xaml.cs">
       <DependentUpon>OutputWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Simulation\Agent.cs" />
+    <Compile Include="Networking\Host.cs" />
     <Compile Include="Simulation\Node.cs" />
-    <Compile Include="Simulation\CPUInfo.cs" />
-    <Compile Include="Simulation\CPUManager.cs" />
+    <Compile Include="Networking\CPUInfo.cs" />
+    <Compile Include="Networking\CPUManager.cs" />
     <Compile Include="Simulation\Map.cs" />
-    <Compile Include="Simulation\MapSync.cs" />
-    <Compile Include="Simulation\Networking.cs" />
+    <Compile Include="Utility\MapSync.cs" />
+    <Compile Include="Networking\Network.cs" />
     <Compile Include="Simulation\Pathfinding.cs" />
     <Compile Include="Simulation\Simulation.cs" />
     <Compile Include="Simulation\SimulationMaster.cs" />
-    <Compile Include="Simulation\SystemDelegator.cs" />
+    <Compile Include="Utility\SystemDelegator.cs" />
     <Compile Include="Utility\TextBoxOutputter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

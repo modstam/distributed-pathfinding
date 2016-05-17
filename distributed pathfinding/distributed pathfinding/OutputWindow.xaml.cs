@@ -38,7 +38,7 @@ namespace distributed_pathfinding
         public void closeWindow(object sender, CancelEventArgs e)
         {
             Console.OpenStandardOutput();
-            Out.WriteLine("Closing outputwindow");
+            Out.put("Closing outputwindow");
         }
 
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace distributed_pathfinding.Simulation
+namespace distributed_pathfinding.Networking
 {
 
     class CPUInfo
@@ -17,6 +17,7 @@ namespace distributed_pathfinding.Simulation
         public string squares { get; set; }
         public string rate { get; set; }
         public string ip { get; set; }
+        public int id { get; set; }
 
         public CPUInfo()
         {

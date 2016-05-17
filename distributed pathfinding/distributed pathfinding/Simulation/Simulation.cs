@@ -40,7 +40,7 @@ namespace distributed_pathfinding.Simulation
                // sw.Reset();
             }
             
-            Out.WriteLine("Simulating stopped...");
+            Out.put("Simulating stopped...");
         }
 
         private void moveAgents()

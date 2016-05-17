@@ -17,6 +17,7 @@ using System.Diagnostics;
 using distributed_pathfinding.Simulation;
 using System.Net;
 using distributed_pathfinding.Utility;
+using distributed_pathfinding.Networking; 
 
 namespace distributed_pathfinding
 {
@@ -30,9 +31,9 @@ namespace distributed_pathfinding
         private Window outputWindow;
         private SimulationMaster master;
         private volatile bool shouldRun = false;
-        private bool serverMode = false;
+        private bool workerMode = false;
         private string ipAddress = "127.0.0.1";
-        private Networking networking;
+        private Network network;
         private bool cpuWindow = true;
         private bool output = true;
 
@@ -48,7 +49,7 @@ namespace distributed_pathfinding
 
         private void runMap()
         {
-            Out.WriteLine("Starting drawing agents..");
+            Out.put("Starting drawing agents..");
 
             List<Agent> agents = MapSync.getProducedAgents();
             Dictionary<int, UIElement> rectangles = null;
@@ -68,13 +69,13 @@ namespace distributed_pathfinding
                 disposeAgents();
             }));
 
-            Out.WriteLine("Agent drawing stopped...");
+            Out.put("Agent drawing stopped...");
         }
 
         private void setupMainWindow()
         {
-            this.networking = new Networking(serverMode, ipAddress);
-            master = new SimulationMaster(this, this.networking);
+            this.network = new Network(workerMode, ipAddress);
+            master = new SimulationMaster(this, this.network);
             List<Agent> agents = MapSync.getProducedAgents();
             setWindowSize(master.getMapHeight() + 200, master.getMapWidth() + 100);
             setUpCanvas(master.getMapHeight(), master.getMapWidth());
@@ -86,7 +87,7 @@ namespace distributed_pathfinding
             Application.Current.MainWindow.Height = height;
             Application.Current.MainWindow.Width = width;
 
-            Out.WriteLine("Resized main window..");
+            Out.put("Resized main window..");
         }
         
 
@@ -95,7 +96,7 @@ namespace distributed_pathfinding
             mapCanvas.Height = height;
             mapCanvas.Width = width;
 
-            Out.WriteLine("Resized canvas window..");
+            Out.put("Resized canvas window..");
 
             ImageBrush ib = new ImageBrush();
             ib.ImageSource = new BitmapImage(new Uri(master.getMapURI(), UriKind.Relative));
@@ -123,7 +124,7 @@ namespace distributed_pathfinding
         private void mainWindowClosing(object sender, CancelEventArgs e)
         {
             //lets close our CPU-window when we close the main window
-            Out.WriteLine("Closing main window");
+            Out.put("Closing main window");
             CPUWindow.Close();
             stop();
             Application.Current.Shutdown();   
@@ -211,9 +212,9 @@ namespace distributed_pathfinding
             IPAddress address;
             if (IPAddress.TryParse(ipTextBox.Text, out address))
             {
-                Out.WriteLine("Valid ip adress entered: " + address.ToString());
+                Out.put("Valid ip adress entered: " + address.ToString());
             }
-            else Out.WriteLine("Invalid ip adress entered: " + ipTextBox.Text);
+            else Out.put("Invalid ip adress entered: " + ipTextBox.Text);
         }
 
         private void modeCheckBox_Checked(object sender, RoutedEventArgs e)
@@ -228,7 +229,7 @@ namespace distributed_pathfinding
             if (int.TryParse(textBox.Text, out result))
             {
                 master.setNumAgents(result);
-                Out.WriteLine("Changed num agents to: " + result);
+                Out.put("Changed num agents to: " + result);
             }
         }
 

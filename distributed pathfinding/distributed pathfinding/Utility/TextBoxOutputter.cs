@@ -33,7 +33,7 @@ namespace distributed_pathfinding.Utility
 
     public class Out
     {
-        public static void WriteLine(string s)
+        public static void put(string s)
         {
             Debug.WriteLine(s);
             Console.WriteLine(s);

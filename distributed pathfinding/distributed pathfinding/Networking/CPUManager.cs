@@ -7,11 +7,11 @@ using System.Management;
 using System.Diagnostics;
 using distributed_pathfinding.Utility;
 
-namespace distributed_pathfinding.Simulation
+namespace distributed_pathfinding.Networking
 {
     class CPUManager
     {
-        public CPUInfo getInfo()
+        public static CPUInfo getInfo()
         {
             CPUInfo info = new CPUInfo();
 
@@ -32,10 +32,10 @@ namespace distributed_pathfinding.Simulation
             }
 
 
-            Out.WriteLine(info.ownerName);
-            Out.WriteLine(info.numLogicalProcessors);
-            Out.WriteLine(info.cpuFrequency);
-            Out.WriteLine(info.cpuModel);
+            //Out.put(info.ownerName);
+            //Out.put(info.numLogicalProcessors);
+            //Out.put(info.cpuFrequency);
+            //Out.put(info.cpuModel);
             return info;
         }
     }

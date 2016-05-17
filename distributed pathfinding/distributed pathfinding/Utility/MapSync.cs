@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading;
 using System.Security;
 using System.Diagnostics;
-namespace distributed_pathfinding.Simulation
+using distributed_pathfinding.Simulation;
+
+namespace distributed_pathfinding.Utility
 {
     class MapSync
     {
