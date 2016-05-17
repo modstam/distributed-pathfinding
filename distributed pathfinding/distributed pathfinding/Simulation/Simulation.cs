@@ -144,12 +144,18 @@ namespace distributed_pathfinding.Simulation
 
         public void stop()
         {
+            if (shouldRun)
+            {
+                Out.put("Starting simulation...");
+            }              
             shouldRun = false;       
         }
 
         public void start()
         {
             shouldRun = true;
+            Out.put("Starting simulation...");
+
             Thread runnerThread = new Thread(run);
             runnerThread.Start();
         }
@@ -157,6 +163,12 @@ namespace distributed_pathfinding.Simulation
         public void setNumAgents(int agents)
         {
             numAgents = agents;
+
+        }
+
+        public int getNumAgents()
+        {
+            return numAgents;
         }
 
 

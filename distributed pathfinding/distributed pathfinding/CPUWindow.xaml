@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:distributed_pathfinding"
         mc:Ignorable="d"
-        Title="Connected CPUs" Height="800" Width="500">
+        Title="Connected CPUs" Height="400" Width="500">
     <Grid>
         <ListView x:Name="listView" RenderTransformOrigin="8.955,0.91">
             <ListView.View>

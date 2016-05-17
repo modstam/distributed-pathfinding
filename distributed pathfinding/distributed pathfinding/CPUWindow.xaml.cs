@@ -76,7 +76,7 @@ namespace distributed_pathfinding
             list.Add(hostInfo);
         }
 
-        private void stop()
+        public void stop()
         {
             shouldRun = false;
         }

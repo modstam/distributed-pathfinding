@@ -22,13 +22,21 @@ namespace distributed_pathfinding.Networking
             this.ipAddress = ipAddress;
         }
 
-        public TcpClient tryConnect(string ipAddress)
+        public void tryConnect(object ipAddress)
         {
-            
+            try
+            {
+            string ip = (string)ipAddress;
             socket = new TcpClient();
-            socket.Connect(ipAddress, 11111);
+            socket.Connect(ip, 11111);
             Out.put("Connected to host at: " + ipAddress);
-            return socket;
+            run(socket);
+
+            }
+            catch (SocketException e)
+            {
+                Out.put(e.ToString());
+            }
         }
 
         public void run(TcpClient socket)
@@ -40,6 +48,7 @@ namespace distributed_pathfinding.Networking
                 Thread.Sleep(1000);
                 sendCPUInfo(stream);
             }
+            socket.Close();
         }
 
         public void sendCPUInfo(NetworkStream stream)
@@ -55,16 +64,9 @@ namespace distributed_pathfinding.Networking
 
         public void start()
         {
-            try
-            {
-                shouldRun = true;
-                run(tryConnect(ipAddress));
-
-            }
-            catch(SocketException e)
-            {
-                Out.put(e.ToString());
-            }
+            shouldRun = true;
+            Thread thread = new Thread(tryConnect);
+            thread.Start(ipAddress);
         }
         
         public void stop()

@@ -68,13 +68,14 @@ namespace distributed_pathfinding.Simulation
 
         public void stop()
         {
-            Out.put("Stopping simulation");
+           
             simulation.stop();
+            network.stop();
         }
 
         public void start()
         {
-            Out.put("Starting simulation");
+            
             map.resetMap();
             simulation.start();
         }
@@ -104,5 +105,9 @@ namespace distributed_pathfinding.Simulation
             simulation.setNumAgents(numAgents);
         }
 
+        public int getNumAgents()
+        {
+            return simulation.getNumAgents();
+        }
     }
 }

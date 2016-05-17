@@ -11,6 +11,7 @@ namespace distributed_pathfinding.Networking
     {
         private bool workerMode;
         private string ipAddress;
+        private int port = 12345;
         private Host host;
         private RemoteWorker worker;
 
@@ -18,35 +19,54 @@ namespace distributed_pathfinding.Networking
         {
             this.workerMode = workerMode;
             this.ipAddress = ipAddress;
+            worker = new RemoteWorker(ipAddress);
+            host = new Host(port);
 
         }
 
-        public void addCPU()
+        public Network(bool workerMode)
         {
-           // add cpu to delegator
-
-        }
-
-        public void disconnectCPU()
-        {
-            // remove cpu from delegator and cleanup
+            this.workerMode = workerMode;
+            this.ipAddress = "127.0.0.1";
+            worker = new RemoteWorker(ipAddress);
+            host = new Host(port);
         }
 
         public void start()
         {
             if (workerMode)
             {
-
+                worker = new RemoteWorker(ipAddress);
+                worker.start();
             }
             else
             {
-
+                host = new Host(port);
+                host.start();
             }
         }
 
         public void stop()
         {
+            if (workerMode)
+            {
+                worker.stop();
+            }
+            else
+            {
+                host.stop();
+            }
+        }
 
+        public void setWorkerMode(bool mode)
+        {
+            if(workerMode != mode)
+            {
+                stop();
+                workerMode = mode;
+            }
+          
+            
         }
     }
 

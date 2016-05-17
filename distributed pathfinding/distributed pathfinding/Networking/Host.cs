@@ -17,10 +17,13 @@ namespace distributed_pathfinding.Networking
 
         private volatile bool shouldRun = false;
         private Dictionary<int, Thread> connectedClients;
+        private Thread listenThread;
+        private int port;
 
-        public Host()
-        { 
-
+        public Host(int port)
+        {
+            this.port = port;
+            listenThread = new Thread(listen);
         }
 
 
@@ -43,6 +46,7 @@ namespace distributed_pathfinding.Networking
                         decideAction(JSONObject);
                     }            
                 }
+                con.Close();
             }
             catch (SocketException e)
             {
@@ -56,16 +60,19 @@ namespace distributed_pathfinding.Networking
             try
             {
                 int connections = 0;
-
-                Int32 port = 11111;
+              
                 IPAddress localAddr = IPAddress.Parse("127.0.0.1");
 
                 TcpListener connectionListener = new TcpListener(localAddr, port);
                 connectionListener.Start();
-
+                Out.put("Host is listening for connections...");
                 while (shouldRun)
-                {
-                    Out.put("Host is listening for connections...");
+                {                 
+                    if (!connectionListener.Pending())
+                    {
+                        Thread.Sleep(500); // choose a number (in milliseconds) that makes sense
+                        continue; // skip to next iteration of loop
+                    }
 
                     TcpClient client = connectionListener.AcceptTcpClient();
                     Console.WriteLine(client.Client.RemoteEndPoint.ToString() + "connected!");
@@ -78,6 +85,8 @@ namespace distributed_pathfinding.Networking
                     connections++;
 
                 }
+                connectionListener.Stop();
+                Out.put("Stopped listening for connections..");
             }
             catch(SocketException e)
             {
@@ -114,12 +123,13 @@ namespace distributed_pathfinding.Networking
         public void start()
         {
             shouldRun = true;
-            listen();
+            listenThread = new Thread(listen);
+            listenThread.Start();
         }
 
         public void stop()
         {
-            shouldRun = false;
+            shouldRun = false;           
         }
 
 

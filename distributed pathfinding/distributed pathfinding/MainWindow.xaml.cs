@@ -27,15 +27,16 @@ namespace distributed_pathfinding
     public partial class MainWindow : Window
     {
 
-        private Window CPUWindow;
-        private Window outputWindow;
+        private CPUWindow CPUWindow;
+        private OutputWindow outputWindow;
         private SimulationMaster master;
-        private volatile bool shouldRun = false;
+        private volatile bool simulationRun = false;
         private bool workerMode = false;
         private string ipAddress = "127.0.0.1";
         private Network network;
         private bool cpuWindow = true;
         private bool output = true;
+        private bool networkRun = false;
 
         public MainWindow()
         {
@@ -55,7 +56,7 @@ namespace distributed_pathfinding
             Dictionary<int, UIElement> rectangles = null;
 
 
-            while (shouldRun)
+            while (simulationRun)
             {
                 agents = MapSync.getProducedAgents();
                 this.Dispatcher.Invoke((Action)(() =>
@@ -79,6 +80,8 @@ namespace distributed_pathfinding
             List<Agent> agents = MapSync.getProducedAgents();
             setWindowSize(master.getMapHeight() + 200, master.getMapWidth() + 100);
             setUpCanvas(master.getMapHeight(), master.getMapWidth());
+            numAgents.Text = "" + master.getNumAgents();
+            ipTextBox.Text = "" + ipAddress;
         }
 
         private void setWindowSize(int height, int width)
@@ -125,7 +128,9 @@ namespace distributed_pathfinding
         {
             //lets close our CPU-window when we close the main window
             Out.put("Closing main window");
+            CPUWindow.stop();
             CPUWindow.Close();
+            outputWindow.Close();
             stop();
             Application.Current.Shutdown();   
         }
@@ -133,7 +138,7 @@ namespace distributed_pathfinding
         private void mainWindowLoaded(object sender, RoutedEventArgs e)
         {
             setupCPUWindow();
-            setupOutputWindow();                        
+            setupOutputWindow();                      
         }
 
 
@@ -175,21 +180,19 @@ namespace distributed_pathfinding
         
         private void stop()
         {
-            shouldRun = false;
+            simulationRun = false;
             master.stop();           
         }
 
         private void start()
         {
-            shouldRun = true;
+            simulationRun = true;
 
             Thread mapUpdateThread = new Thread(runMap);
             mapUpdateThread.Start();
 
             Thread simulationThread = new Thread(master.start);
-            simulationThread.Start();
-
-            
+            simulationThread.Start();     
         }
 
 
@@ -207,19 +210,50 @@ namespace distributed_pathfinding
             return rec;
         }
 
-        private void submitIpButton_Click(object sender, RoutedEventArgs e)
-        {
-            IPAddress address;
-            if (IPAddress.TryParse(ipTextBox.Text, out address))
+        private void networkButton_Click(object sender, RoutedEventArgs e)
+        {                   
+                
+            if (!networkRun)
             {
-                Out.put("Valid ip adress entered: " + address.ToString());
+                stop();
+                network.stop();
+                networkRun = true;
+                networkButton.Content = "Stop";
+                if (workerMode)
+                {
+                IPAddress address;
+                if (IPAddress.TryParse(ipTextBox.Text, out address))
+                    {
+                    Out.put("Valid ip adress entered: " + address.ToString());
+                    network = new Network(workerMode, address.ToString());
+                    }
+                    else Out.put("Invalid ip adress entered: " + ipTextBox.Text);
+                    }
+                else
+                {
+                    network = new Network(workerMode);
+                }
+                network.start();                 
             }
-            else Out.put("Invalid ip adress entered: " + ipTextBox.Text);
+            else
+            {
+                stop();
+                network.stop();
+                networkRun = false;
+                networkButton.Content = "Listen";
+             }
         }
 
         private void modeCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-
+            if (modeCheckBox.IsChecked == true)
+            {
+                workerMode = true;
+            }
+            else
+            {
+                workerMode = false;
+            }
         }
 
         private void numAgents_TextChanged(object sender, TextChangedEventArgs e)
@@ -235,8 +269,16 @@ namespace distributed_pathfinding
 
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!shouldRun) start();
-            else stop();
+            if (!simulationRun)
+            {
+                startButton.Content = "Stop";
+                start();
+            }
+            else
+            {
+                startButton.Content = "Start";
+                stop();
+            }
 
         }
     }  
