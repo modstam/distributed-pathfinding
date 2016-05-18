@@ -19,7 +19,7 @@ namespace distributed_pathfinding.Networking
         {
             this.workerMode = workerMode;
             this.ipAddress = ipAddress;
-            worker = new RemoteWorker(ipAddress);
+            worker = new RemoteWorker(ipAddress, port);
             host = new Host(port);
 
         }
@@ -28,7 +28,7 @@ namespace distributed_pathfinding.Networking
         {
             this.workerMode = workerMode;
             this.ipAddress = "127.0.0.1";
-            worker = new RemoteWorker(ipAddress);
+            worker = new RemoteWorker(ipAddress, port);
             host = new Host(port);
         }
 
@@ -36,7 +36,7 @@ namespace distributed_pathfinding.Networking
         {
             if (workerMode)
             {
-                worker = new RemoteWorker(ipAddress);
+                worker = new RemoteWorker(ipAddress, port);
                 worker.start();
             }
             else

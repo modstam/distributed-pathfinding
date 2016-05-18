@@ -24,6 +24,7 @@ namespace distributed_pathfinding.Networking
         {
             this.port = port;
             listenThread = new Thread(listen);
+            connectedClients = new Dictionary<int, Thread>();
         }
 
 
@@ -46,6 +47,8 @@ namespace distributed_pathfinding.Networking
                         decideAction(JSONObject);
                     }            
                 }
+                streamReader.Dispose();
+                stream.Dispose();
                 con.Close();
             }
             catch (SocketException e)
@@ -65,7 +68,7 @@ namespace distributed_pathfinding.Networking
 
                 TcpListener connectionListener = new TcpListener(localAddr, port);
                 connectionListener.Start();
-                Out.put("Host is listening for connections...");
+                Out.put("Host is listening for connections on port: " + port + "...");
                 while (shouldRun)
                 {                 
                     if (!connectionListener.Pending())
@@ -75,12 +78,13 @@ namespace distributed_pathfinding.Networking
                     }
 
                     TcpClient client = connectionListener.AcceptTcpClient();
-                    Console.WriteLine(client.Client.RemoteEndPoint.ToString() + "connected!");
+                    Console.WriteLine(client.Client.RemoteEndPoint.ToString() + " connected!");
 
 
                     Thread thread = new Thread(run);
-                    thread.Start(client);
                     connectedClients[connections] = thread;
+                    thread.Start(client);
+                    
 
                     connections++;
 
