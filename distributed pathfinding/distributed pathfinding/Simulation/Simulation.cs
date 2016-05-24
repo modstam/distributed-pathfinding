@@ -15,6 +15,7 @@ namespace distributed_pathfinding.Simulation
         private Map map;
         private volatile bool shouldRun;
         private Random rnd;
+        private bool firstRun = true;
 
         public Simulation(Map map)
         {
@@ -32,12 +33,16 @@ namespace distributed_pathfinding.Simulation
             sw.Start();
             while (shouldRun)
             {
-               // sw.Start();
-                syncMap(map);
-                moveAgents();
-                Thread.Sleep(100);
-               // Console.WriteLine(sw.Elapsed);
-               // sw.Reset();
+                if (firstRun)
+                {
+                    firstPass();       
+                }
+                else
+                {
+                    syncMap(map);
+                    moveAgents();
+                    Thread.Sleep(100);
+                }
             }
             
             Out.put("Simulating stopped...");
@@ -45,32 +50,37 @@ namespace distributed_pathfinding.Simulation
 
         private void moveAgents()
         {
-            Dictionary<int,Agent> agents = map.getAgents();
-            foreach(Agent agent in agents.Values.ToList())
+            Dictionary<int, Agent> agents = map.getAgents();
+            List<Agent> agentList = agents.Values.ToList();
+            int i = 0;
+            while (shouldRun && i < agentList.Count)
             {
+                Agent agent = agentList[i];
 
-                if (reachedGoal(agent)) 
+                if (reachedGoal(agent))
                 {
                     generateGoal(agent);
-                    Debug.WriteLine("new goal is: " + agent.goalX + ", " + agent.goalY + " agent id: " + agent.id);
                     calculatePath(agent);
                 }
-                if(agent.getPath() == null || agent.getPath().Count <= 0) //if the agent has no path, lets calculate one 
-                {                   
+                if (agent.getPath() == null || agent.getPath().Count <= 0) //if the agent has no path, lets calculate one 
+                {
                     calculatePath(agent);
                 }
                 takeStep(agent);
 
-              
+                ++i;
             }
         }
 
         private void calculatePath(Agent agent)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             Pathfinding aStar = new Pathfinding(); 
             List<Node> path = aStar.SimplePath(map, calcDepth, agent.x, agent.y, agent.goalX, agent.goalY);
-            //Debug.WriteLine("Calculated path for agent: " + agent.id + " length: " + path.Count);
+           // Debug.WriteLine(sw.ElapsedMilliseconds + "ms: " + "Calculated path for agent: " + agent.id + " length: " + path.Count);
             agent.setPath(path);
+            sw.Stop();
         }
 
         private void takeStep(Agent agent)
@@ -113,8 +123,9 @@ namespace distributed_pathfinding.Simulation
 
                 map.addAgent(i, x, y);
                 generateGoal(map.getAgent(i));              
-                Debug.WriteLine("added agent at " + x + ", " + y + " with goal at "+ map.getAgent(i).goalX + ", " + map.getAgent(i).goalY);
+               // Debug.WriteLine("added agent at " + x + ", " + y + " with goal at "+ map.getAgent(i).goalX + ", " + map.getAgent(i).goalY);
             }
+            Out.put("agents added");
         }
 
         private void generateGoal(Agent agent)
@@ -146,7 +157,7 @@ namespace distributed_pathfinding.Simulation
         {
             if (shouldRun)
             {
-                Out.put("Starting simulation...");
+                Out.put("Stopping simulation...");
             }              
             shouldRun = false;       
         }
@@ -154,6 +165,7 @@ namespace distributed_pathfinding.Simulation
         public void start()
         {
             shouldRun = true;
+            firstRun = true;
             Out.put("Starting simulation...");
 
             Thread runnerThread = new Thread(run);
@@ -169,6 +181,57 @@ namespace distributed_pathfinding.Simulation
         public int getNumAgents()
         {
             return numAgents;
+        }
+
+        private void firstPass()
+        {
+            firstRun = false;
+            int numThreads = 10;
+            int increment = numAgents / numThreads +1;
+            int start = 0;
+            int end = increment;
+            List<Thread> threads = new List<Thread>();
+
+            for(int i = 0; i < numThreads; ++i)
+            {
+                CalcRange range = new CalcRange();
+                range.start = start;
+                range.end = end;
+                start = range.end;
+                end += increment;
+
+                Out.put("Thread " + i + " range: " + range.start + "-" + range.end); 
+
+                Thread thread = new Thread(calcPathForAgents);
+                thread.Start(range);
+                threads.Add(thread);
+            }
+            foreach (var thread in threads)
+            {
+                thread.Join();
+            }
+        }
+
+        private void calcPathForAgents(object range)
+        {
+            var agentRange = (CalcRange)range;
+            if (agentRange.end >= numAgents - 1) agentRange.end = numAgents - 1;
+
+            Dictionary<int, Agent> agents = map.getAgents();
+            List<Agent> agentList = agents.Values.ToList();
+            int i = agentRange.start;
+            while(shouldRun && i < agentRange.end)
+            {
+                calculatePath(agentList[i]);
+                ++i;
+            }
+
+        }
+
+        struct CalcRange
+        {
+            public int start;
+            public int end;
         }
 
 

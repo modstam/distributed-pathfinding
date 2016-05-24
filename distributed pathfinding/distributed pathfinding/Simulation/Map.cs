@@ -120,7 +120,10 @@ namespace distributed_pathfinding.Simulation
 
         public bool isOpen(int x, int y)
         {
+            if (x < 0 || y < 0) return false;
+            if (x >= getMatrixRowSize() || y >= getMatrixColumnSize()) return false;
             if (map[x, y].type != NodeType.Wall) return true;
+
             return false;
         }
 
