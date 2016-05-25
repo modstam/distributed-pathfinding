@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace distributed_pathfinding.Simulation
 {
-    class Pathfinding
+    class SimplePathfinding
     {
 
 

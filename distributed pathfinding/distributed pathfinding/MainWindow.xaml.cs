@@ -17,7 +17,8 @@ using System.Diagnostics;
 using distributed_pathfinding.Simulation;
 using System.Net;
 using distributed_pathfinding.Utility;
-using distributed_pathfinding.Networking; 
+using distributed_pathfinding.Networking;
+using distributed_pathfinding.Simulation.ClusterPathfinding;
 
 namespace distributed_pathfinding
 {
@@ -37,6 +38,8 @@ namespace distributed_pathfinding
         private bool cpuWindow = true;
         private bool output = true;
         private bool networkRun = false;
+        private bool simplePath = true;
+        private int clusterSize = 100;
 
         public MainWindow()
         {
@@ -47,36 +50,11 @@ namespace distributed_pathfinding
             
         }
 
-
-        private void runMap()
-        {
-            Out.put("Starting drawing agents..");
-
-            List<Agent> agents = MapSync.getProducedAgents();
-            Dictionary<int, UIElement> rectangles = null;
-
-
-            while (simulationRun)
-            {
-                agents = MapSync.getProducedAgents();
-                this.Dispatcher.Invoke((Action)(() =>
-                {
-                    rectangles = updateAgents(agents, rectangles);
-                }));
-            }
-
-            this.Dispatcher.Invoke((Action)(() =>
-            {
-                disposeAgents();
-            }));
-
-            Out.put("Agent drawing stopped...");
-        }
-
         private void setupMainWindow()
         {
             this.network = new Network(workerMode, ipAddress);
-            master = new SimulationMaster(this, this.network);
+            master = new SimulationMaster(this, this.network,this.simplePath);
+            master.setClusterSize(clusterSize);
             List<Agent> agents = MapSync.getProducedAgents();
             setWindowSize(master.getMapHeight() + 200, master.getMapWidth() + 100);
             setUpCanvas(master.getMapHeight(), master.getMapWidth());
@@ -142,6 +120,87 @@ namespace distributed_pathfinding
         }
 
 
+        private void runMap()
+        {
+            Out.put("Starting drawing agents..");
+
+            List<Agent> agents = MapSync.getProducedAgents();
+            Dictionary<int, UIElement> rectangles = null;
+            bool init = true;
+            var copyMap = master.getMapCopy();
+
+            while (simulationRun)
+            {
+                agents = MapSync.getProducedAgents();
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    if (init)
+                    {
+                        drawClusters(copyMap);
+                        init = false;
+                    }
+                    rectangles = updateAgents(agents, rectangles);
+                }));
+            }
+
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                disposeAgents();
+            }));
+
+            Out.put("Agent drawing stopped...");
+        }
+
+        private List<UIElement> drawClusters(Map map)
+        {
+            var rectangles = new List<UIElement>();
+            var clusterGen = new ClusterGenerator(clusterSize);
+            var clusters = clusterGen.generateClusters(map);
+            int id = 10000000;
+            foreach(Cluster cluster in clusters)
+            {
+                rectangles.Add(addRect(cluster.left, cluster.top, cluster.height, cluster.width, Colors.Blue,1, id));
+                //Out.put(cluster.left + "," + cluster.top + "," + cluster.height + "," + cluster.width);
+                ++id;
+                drawExits(cluster);
+            }
+
+            return rectangles;
+        }
+
+        private void drawExits(Cluster cluster)
+        {
+            int size = 5;
+            foreach(ExitPoint exit in cluster.exits)
+            {
+                if (exit.x + size >= cluster.left + cluster.width && exit.y + size >= cluster.top)
+                {
+                    int moveX = cluster.left - exit.x + size;
+                    int moveY = cluster.top - exit.y + size;
+
+                    moveX = 0;
+                    moveY = 0;
+
+                    addFilledRect(exit.x + moveX, exit.y + moveY, size, size, Colors.Green, 0);
+                }
+                else if(exit.x + size >= cluster.left + cluster.width)
+                {
+                    int moveX = cluster.left - exit.x + size;
+
+                    moveX = 0;
+
+                    addFilledRect(exit.x+moveX, exit.y, size, size, Colors.Green, 0);
+                }
+                else
+                {
+                    addFilledRect(exit.x, exit.y, size, size, Colors.Green, 0);
+                }
+                
+                
+            }
+        }
+
+
         private void disposeAgents()
         {
             mapCanvas.Children.Clear();
@@ -172,7 +231,7 @@ namespace distributed_pathfinding
             if (agents == null) return null;
             foreach (Agent agent in agents)
             {
-                elements[agent.id] = addRect(agent.x, agent.y, 4, 4, Colors.Red, agent.id);
+                elements[agent.id] = addFilledRect(agent.x, agent.y, 2, 2, Colors.Red, agent.id);
 
             }
             return elements;
@@ -196,7 +255,7 @@ namespace distributed_pathfinding
         }
 
 
-        private Rectangle addRect(double x, double y, int h, int w, Color color, int id)
+        private Rectangle addFilledRect(double x, double y, int h, int w, Color color, int id)
         {
             Rectangle rec = new Rectangle();
             rec.Uid = "" + id;
@@ -206,6 +265,21 @@ namespace distributed_pathfinding
             rec.Height = h;
             rec.Fill = new SolidColorBrush(color);
             mapCanvas.Children.Add(rec);  
+
+            return rec;
+        }
+
+        private Rectangle addRect(double x, double y, int h, int w, Color color, int strokeSize, int id)
+        {
+            Rectangle rec = new Rectangle();
+            rec.Uid = "" + id;
+            Canvas.SetTop(rec, y);
+            Canvas.SetLeft(rec, x);
+            rec.Width = w;
+            rec.Height = h;
+            rec.Stroke = new SolidColorBrush(color);
+            rec.StrokeThickness = strokeSize;
+            mapCanvas.Children.Add(rec);
 
             return rec;
         }

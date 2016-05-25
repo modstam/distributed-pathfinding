@@ -69,13 +69,17 @@
     </Compile>
     <Compile Include="Simulation\Agent.cs" />
     <Compile Include="Networking\Host.cs" />
+    <Compile Include="Simulation\ClusterPathfinding\Cluster.cs" />
+    <Compile Include="Simulation\ClusterPathfinding\ClusterGenerator.cs" />
+    <Compile Include="Simulation\ClusterPathfinding\ClusterPathfinding.cs" />
+    <Compile Include="Simulation\ClusterPathfinding\ExitPoint.cs" />
     <Compile Include="Simulation\Node.cs" />
     <Compile Include="Networking\CPUInfo.cs" />
     <Compile Include="Networking\CPUManager.cs" />
     <Compile Include="Simulation\Map.cs" />
     <Compile Include="Utility\MapSync.cs" />
     <Compile Include="Networking\Network.cs" />
-    <Compile Include="Simulation\Pathfinding.cs" />
+    <Compile Include="Simulation\SimplePathfinding.cs" />
     <Compile Include="Simulation\Simulation.cs" />
     <Compile Include="Simulation\SimulationMaster.cs" />
     <Compile Include="Utility\SystemDelegator.cs" />
@@ -130,6 +134,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

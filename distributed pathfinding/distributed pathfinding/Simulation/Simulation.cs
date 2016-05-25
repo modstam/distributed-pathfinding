@@ -16,17 +16,47 @@ namespace distributed_pathfinding.Simulation
         private volatile bool shouldRun;
         private Random rnd;
         private bool firstRun = true;
+        private bool simplePath;
+        private int clusterSize = 40;
 
-        public Simulation(Map map)
+        public Simulation(Map map, bool simplePath)
         {
             this.map = map;
             this.rnd = new Random();
+            this.simplePath = simplePath;
         }
 
         /**
          * This is the core function of the simulation
          * */
         private void run()
+        {
+            if (simplePath)
+            {
+                simplePathfinding();
+            }
+            else
+            {
+                clusterPathFinding();
+            }
+        }
+
+        private void clusterPathFinding()
+        {
+            spawnAgents();
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            while (shouldRun)
+            {
+                    //syncMap(map);
+                    //moveAgents();
+                    //Thread.Sleep(100);
+            }
+
+            Out.put("Simulating stopped...");
+        }
+
+        private void simplePathfinding()
         {
             spawnAgents();
             Stopwatch sw = new Stopwatch();
@@ -35,7 +65,7 @@ namespace distributed_pathfinding.Simulation
             {
                 if (firstRun)
                 {
-                    firstPass();       
+                    firstPass();
                 }
                 else
                 {
@@ -44,7 +74,7 @@ namespace distributed_pathfinding.Simulation
                     Thread.Sleep(100);
                 }
             }
-            
+
             Out.put("Simulating stopped...");
         }
 
@@ -76,7 +106,7 @@ namespace distributed_pathfinding.Simulation
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            Pathfinding aStar = new Pathfinding(); 
+            SimplePathfinding aStar = new SimplePathfinding(); 
             List<Node> path = aStar.SimplePath(map, calcDepth, agent.x, agent.y, agent.goalX, agent.goalY);
            // Debug.WriteLine(sw.ElapsedMilliseconds + "ms: " + "Calculated path for agent: " + agent.id + " length: " + path.Count);
             agent.setPath(path);
@@ -232,6 +262,16 @@ namespace distributed_pathfinding.Simulation
         {
             public int start;
             public int end;
+        }
+
+        public Map getMapCopy()
+        {
+            return new Map(this.map);
+        }
+
+        public void setClusterSize(int clusterSize)
+        {
+            this.clusterSize = clusterSize;
         }
 
 

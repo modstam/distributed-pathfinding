@@ -16,12 +16,19 @@ namespace distributed_pathfinding.Simulation
         Bitmap img;
         Dictionary<int, Agent> agents;
         List<Node> nodes;
-
-
+        
         public Map()
         {
             agents = new Dictionary<int, Agent>();
             nodes = new List<Node>();
+        }
+
+        public Map(Map prevMap)
+        {
+            this.map = prevMap.getMapCopy();
+            this.img = prevMap.img;
+            this.agents = null;
+            this.nodes = null;
         }
 
         public void loadMap(string url)
@@ -66,9 +73,20 @@ namespace distributed_pathfinding.Simulation
            
         }
 
-        public int[][] getInstance()
+        private Node[,] getMapCopy()
         {
-
+            if(map != null)
+            {
+                Node[,] copy = new Node[getMatrixRowSize(), getMatrixColumnSize()];
+                for(int x = 0; x < getMatrixRowSize(); ++x)
+                {
+                    for (int y = 0; y < getMatrixColumnSize(); ++y)
+                    {
+                        copy[x, y] = map[x, y].getCopy();
+                    }
+                }
+                return copy;
+            }
             return null;
         }
 

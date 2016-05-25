@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading;
 using System.Security;
 using System.Diagnostics;
-using distributed_pathfinding.Simulation;
+using distributed_pathfinding.Simulation.ClusterPathfinding;
 
-namespace distributed_pathfinding.Utility
+namespace distributed_pathfinding.Simulation
 {
     class MapSync
     {
@@ -72,5 +72,7 @@ namespace distributed_pathfinding.Utility
                 return agents;
             }
         }
+
+
     }
 }

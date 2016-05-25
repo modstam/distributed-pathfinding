@@ -21,10 +21,11 @@ namespace distributed_pathfinding.Simulation
         Map map;
         Network network;
         int numAgents=100;
+        bool simplePath;
 
-
-        public SimulationMaster(Window mainWindow, Network network)
+        public SimulationMaster(Window mainWindow, Network network, bool simplePath)
         {
+            this.simplePath = simplePath;
             this.network = network;
             this.mainWindow = mainWindow;
             getConfig();
@@ -56,7 +57,7 @@ namespace distributed_pathfinding.Simulation
             {
                 map = new Map();
                 map.loadMap(settings["Map"]);
-                simulation = new Simulation(map);
+                simulation = new Simulation(map,simplePath);
                 simulation.setNumAgents(numAgents);
             }
             else
@@ -108,6 +109,16 @@ namespace distributed_pathfinding.Simulation
         public int getNumAgents()
         {
             return simulation.getNumAgents();
+        }
+
+        public Map getMapCopy()
+        {
+            return simulation.getMapCopy();
+        }
+
+        public void setClusterSize(int clusterSize)
+        {
+            simulation.setClusterSize(clusterSize);
         }
     }
 }
