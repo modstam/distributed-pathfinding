@@ -84,7 +84,7 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
         {
             int h = cluster1.height;
             int x = cluster1.left;
-            int y = (direction >= 0) ? cluster1.top : cluster1.top + h;
+            int y = (direction >= 0) ? cluster1.top : cluster1.top + h-1;
             //go right until we find the first spot
             while (Math.Abs(y - cluster1.top + h / 2) != 0)
             {
@@ -102,7 +102,7 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
         {
             int w = cluster1.width;
             int y = cluster1.top;
-            int x = (direction >= 0) ? cluster1.left : cluster1.left + w; 
+            int x = (direction >= 0) ? cluster1.left : cluster1.left + w-1; 
             //go right until we find the first spot
             while(Math.Abs(x - cluster1.left + w/2) != 0)
             {

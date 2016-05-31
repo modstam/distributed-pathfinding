@@ -101,7 +101,7 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
         {
             var closed = new Dictionary<string, HashSet<string>>();
             var pathfinding = new SimplePathfinding();
-            int paths = 0;
+            int numPaths = 0;
 
             foreach(ExitPoint exit1 in exits)
             {
@@ -118,12 +118,16 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
                         if (!closed.ContainsKey(exit2.id)) closed[exit2.id] = new HashSet<string>();
                         closed[exit1.id].Add(exit2.id);
                         closed[exit2.id].Add(exit1.id);
-                        addPath(exit1, exit2, path);
-                        ++paths;
+                        addPath(exit1, exit2, path);                        
+                        ++numPaths;
                     }             
                 }
             }
-           Out.put("Cluster " + id + ": paths count : " + paths);
+           Out.put("Cluster " + id + ": paths count : " + numPaths);
+            //foreach (ExitPoint exit1 in exits)
+            //{
+            //    Out.put(exit1.id);
+            //}
 
         }
 

@@ -39,7 +39,7 @@ namespace distributed_pathfinding
         private bool output = true;
         private bool networkRun = false;
         private bool simplePath = true;
-        private int clusterSize = 200;
+        private int clusterSize = 100;
 
         public MainWindow()
         {
@@ -140,7 +140,7 @@ namespace distributed_pathfinding
                     if (init)
                     {
                         drawClusters(clusters);
-                        drawPaths(clusters);
+                        //drawPaths(clusters);
                         init = false;
                     }
                     rectangles = updateAgents(agents, rectangles);
