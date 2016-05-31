@@ -28,7 +28,7 @@ namespace distributed_pathfinding.Simulation
             this.map = prevMap.getMapCopy();
             this.img = prevMap.img;
             this.agents = null;
-            this.nodes = null;
+            this.nodes = prevMap.getNodesCopy();
         }
 
         public void loadMap(string url)
@@ -71,6 +71,17 @@ namespace distributed_pathfinding.Simulation
                 Out.put(e.ToString());
             }
            
+        }
+
+        private List<Node> getNodesCopy()
+        {
+            var copy = new List<Node>(nodes.Count);
+
+            for(int i = 0; i < nodes.Count; ++i)
+            {
+                copy.Add(nodes[i].getCopy());
+            }
+            return copy;
         }
 
         private Node[,] getMapCopy()

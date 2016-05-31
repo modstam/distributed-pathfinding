@@ -39,21 +39,21 @@ namespace distributed_pathfinding
         private bool output = true;
         private bool networkRun = false;
         private bool simplePath = true;
-        private int clusterSize = 100;
+        private int clusterSize = 200;
 
         public MainWindow()
         {
-            InitializeComponent();           
+            InitializeComponent();
             Application.Current.MainWindow.Closing += new CancelEventHandler(mainWindowClosing);
             this.Loaded += new RoutedEventHandler(mainWindowLoaded);
             setupMainWindow();
-            
+
         }
 
         private void setupMainWindow()
         {
             this.network = new Network(workerMode, ipAddress);
-            master = new SimulationMaster(this, this.network,this.simplePath);
+            master = new SimulationMaster(this, this.network, this.simplePath);
             master.setClusterSize(clusterSize);
             List<Agent> agents = MapSync.getProducedAgents();
             setWindowSize(master.getMapHeight() + 200, master.getMapWidth() + 100);
@@ -70,7 +70,7 @@ namespace distributed_pathfinding
 
             Out.put("Resized main window..");
         }
-        
+
 
         private void setUpCanvas(int height, int width)
         {
@@ -110,13 +110,13 @@ namespace distributed_pathfinding
             CPUWindow.Close();
             outputWindow.Close();
             stop();
-            Application.Current.Shutdown();   
+            Application.Current.Shutdown();
         }
 
         private void mainWindowLoaded(object sender, RoutedEventArgs e)
         {
             setupCPUWindow();
-            setupOutputWindow();                      
+            setupOutputWindow();
         }
 
 
@@ -128,6 +128,9 @@ namespace distributed_pathfinding
             Dictionary<int, UIElement> rectangles = null;
             bool init = true;
             var copyMap = master.getMapCopy();
+            var clusterGen = new ClusterGenerator(clusterSize);
+            var clusters = clusterGen.generateClusters(copyMap);
+            //drawPaths(clusters);
 
             while (simulationRun)
             {
@@ -136,7 +139,8 @@ namespace distributed_pathfinding
                 {
                     if (init)
                     {
-                        drawClusters(copyMap);
+                        drawClusters(clusters);
+                        drawPaths(clusters);
                         init = false;
                     }
                     rectangles = updateAgents(agents, rectangles);
@@ -151,11 +155,9 @@ namespace distributed_pathfinding
             Out.put("Agent drawing stopped...");
         }
 
-        private List<UIElement> drawClusters(Map map)
+        private List<UIElement> drawClusters(Cluster[,] clusters)
         {
             var rectangles = new List<UIElement>();
-            var clusterGen = new ClusterGenerator(clusterSize);
-            var clusters = clusterGen.generateClusters(map);
             int id = 10000000;
             foreach(Cluster cluster in clusters)
             {
@@ -194,9 +196,27 @@ namespace distributed_pathfinding
                 else
                 {
                     addFilledRect(exit.x, exit.y, size, size, Colors.Green, 0);
+                }                                        
+            }         
+        }
+
+        private void drawPaths(Cluster[,] clusters)
+        {
+            foreach(Cluster cluster in clusters)
+            {
+
+                foreach(ExitPoint exit1 in cluster.exits)
+                {
+                    foreach (ExitPoint exit2 in cluster.exits)
+                    {
+                        if (exit1 == exit2) continue;
+                        var path = cluster.getPath(exit1, exit2);
+                        foreach (var node in path)
+                        {
+                            addFilledRect(node.x, node.y, 2, 2, Colors.DarkMagenta, 0);
+                        }
+                    }
                 }
-                
-                
             }
         }
 

@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
+using System.Diagnostics;
 using distributed_pathfinding.Utility;
 
 namespace distributed_pathfinding.Simulation.ClusterPathfinding
@@ -10,6 +11,7 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
     class ClusterGenerator
     {
         int size;
+        Map map;
 
         public ClusterGenerator(int size)
         {
@@ -18,8 +20,10 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
 
         public Cluster[,] generateClusters(Map map)
         {
+            this.map = map;
             var clusters = makeClusters(map);
             generateExits(map, clusters);
+            makePathsBetweenExits(map, clusters);
 
             return clusters;
         }
@@ -208,5 +212,40 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
             if (i == 0) return 0;
             return i;
         }
+
+        private void makePathsBetweenExits(Map map, Cluster[,] clusters)
+        {
+            var threads = new List<Thread>();
+            Stopwatch sw = new Stopwatch();
+
+            sw.Start();
+            foreach(Cluster cluster in clusters)
+            {              
+                Thread thread = new Thread(connectExitStarter);
+                thread.Start(cluster);
+            }
+
+            foreach (var t in threads)
+            {
+                t.Join();
+            }
+            bool lives = false;
+            foreach(var t in threads)
+            {
+                if (t.IsAlive) lives = true;
+            }
+            
+
+            Out.put("active threads connecting exits: " + lives);
+            Out.put("connecting exits took " + sw.ElapsedMilliseconds + "ms");
+            sw.Stop();
+        }
+
+        private void connectExitStarter(object cluster)
+        {
+            Cluster clus = (Cluster)cluster;
+            clus.connectExits(map);
+        }      
+        
     }
 }

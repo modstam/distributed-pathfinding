@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using distributed_pathfinding.Simulation.ClusterPathfinding;
 
 namespace distributed_pathfinding.Simulation
 {
@@ -11,7 +12,7 @@ namespace distributed_pathfinding.Simulation
     {
 
 
-        public List<Node> SimplePath(Map map,int depth, int startX, int startY, int endX, int endY)
+        public List<Node> SimplePath(Map map,int depth, int startX, int startY, int endX, int endY, Cluster constraint)
         {
             /**
              *	this A* variant was implemented straight off of wikipedias version
@@ -59,7 +60,7 @@ namespace distributed_pathfinding.Simulation
                 fScore.Remove(current);
                 closedSet.Add(current);
 
-                List<int> neighbours = findNeighbours(current, map, closedSet, openSet); 
+                List<int> neighbours = findNeighbours(current, map, closedSet, openSet, constraint); 
                 foreach (int neighbor in neighbours)
                 {
                     if (closedSet.Contains(neighbor)) continue;
@@ -125,41 +126,46 @@ namespace distributed_pathfinding.Simulation
             return lowestNode;
         }
 
-        private List<int> findNeighbours(int node, Map map, HashSet<int> closedSet, HashSet<int> openSet)
+        private List<int> findNeighbours(int node, Map map, HashSet<int> closedSet, HashSet<int> openSet, Cluster constraint)
         {
             List<int> neighbours = new List<int>();
             int x = map.getNode(node).x;
             int y = map.getNode(node).y;
 
-            if (map.isOpen(x + 1, y))
+            if(constraint == null)
+            {
+                constraint = new Cluster(0, 0, map.getMatrixRowSize(), map.getMatrixColumnSize(), 0, 0);
+            }
+
+            if (map.isOpen(x + 1, y) && constraint.inBounds(x + 1, y))
             {
                 neighbours.Add(map.getNode(x + 1, y).id);
             }
-            if (map.isOpen(x - 1, y))
+            if (map.isOpen(x - 1, y) && constraint.inBounds(x - 1, y))
             {
                 neighbours.Add(map.getNode(x - 1, y).id);
             }
-            if (map.isOpen(x, y + 1))
+            if (map.isOpen(x, y + 1) && constraint.inBounds(x, y + 1))
             {
                 neighbours.Add(map.getNode(x, y + 1).id);
             }
-            if (map.isOpen(x, y - 1))
+            if (map.isOpen(x, y - 1) && constraint.inBounds(x, y - 1))
             {
                 neighbours.Add(map.getNode(x, y - 1).id);
             }
-            if (map.isOpen(x - 1, y + 1))
+            if (map.isOpen(x - 1, y + 1) && constraint.inBounds(x - 1, y + 1))
             {
                 neighbours.Add(map.getNode(x - 1, y + 1).id);
             }
-            if (map.isOpen(x + 1, y + 1))
+            if (map.isOpen(x + 1, y + 1) && constraint.inBounds(x + 1, y + 1))
             {
                 neighbours.Add(map.getNode(x + 1, y + 1).id);
             }
-            if (map.isOpen(x + 1, y - 1))
+            if (map.isOpen(x + 1, y - 1) && constraint.inBounds(x + 1, y - 1))
             {
                 neighbours.Add(map.getNode(x + 1, y - 1).id);
             }
-            if (map.isOpen(x - 1, y - 1))
+            if (map.isOpen(x - 1, y - 1) && constraint.inBounds(x - 1, y - 1))
             {
                 neighbours.Add(map.getNode(x - 1, y - 1).id);
             }

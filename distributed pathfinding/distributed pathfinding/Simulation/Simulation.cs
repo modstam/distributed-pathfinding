@@ -107,7 +107,7 @@ namespace distributed_pathfinding.Simulation
             Stopwatch sw = new Stopwatch();
             sw.Start();
             SimplePathfinding aStar = new SimplePathfinding(); 
-            List<Node> path = aStar.SimplePath(map, calcDepth, agent.x, agent.y, agent.goalX, agent.goalY);
+            List<Node> path = aStar.SimplePath(map, calcDepth, agent.x, agent.y, agent.goalX, agent.goalY, null);
            // Debug.WriteLine(sw.ElapsedMilliseconds + "ms: " + "Calculated path for agent: " + agent.id + " length: " + path.Count);
             agent.setPath(path);
             sw.Stop();
@@ -258,12 +258,6 @@ namespace distributed_pathfinding.Simulation
 
         }
 
-        struct CalcRange
-        {
-            public int start;
-            public int end;
-        }
-
         public Map getMapCopy()
         {
             return new Map(this.map);
@@ -274,7 +268,12 @@ namespace distributed_pathfinding.Simulation
             this.clusterSize = clusterSize;
         }
 
+    }
 
 
+    public struct CalcRange
+    {
+        public int start;
+        public int end;
     }
 }

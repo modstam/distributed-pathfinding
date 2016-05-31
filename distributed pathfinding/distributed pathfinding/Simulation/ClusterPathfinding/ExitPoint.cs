@@ -9,11 +9,13 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
     class ExitPoint
     {
         public int x, y;
+        public string id;
 
         public ExitPoint(int x, int y)
         {
             this.x = x;
             this.y = y;
+            this.id = x + "," + y;
         }
     }
 }
