@@ -18,17 +18,17 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
             this.size = size;
         }
 
-        public Cluster[,] generateClusters(Map map)
+        public ClusterMap generateClusters(Map map)
         {
             this.map = map;
             var clusters = makeClusters(map);
-            generateExits(map, clusters);
-            makePathsBetweenExits(map, clusters);
+            generateExits(clusters);
+            makePathsBetweenExits(clusters);
 
             return clusters;
         }
 
-        private Cluster[,] makeClusters(Map map)
+        private ClusterMap makeClusters(Map map)
         {
 
             int x = calcClusterXSize(map);
@@ -48,12 +48,13 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
                 }
                 k = 0;
             }
-
-            return clusters;
+            var clusterMap = new ClusterMap(clusters, map);
+            return clusterMap;
         }
 
-        private void generateExits( Map map, Cluster[,] clusters)
+        private void generateExits(ClusterMap clusterMap)
         {
+            var clusters = clusterMap.getClusterMap();
             for(int x = 0; x < clusters.GetLength(0); ++x)
             {
                 for (int y = 0; y < clusters.GetLength(1); ++y)
@@ -62,17 +63,17 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
                     {
                         var cluster1 = clusters[x, y];
                         var cluster2 = clusters[x, y - 1];
-                        makeExitHorizontal(cluster1, cluster2, map, 1);
-                        makeMiddleExitHorizontal(cluster1, cluster2, map);
-                        makeExitHorizontal(cluster1, cluster2, map, -1);
+                        makeExitHorizontal(cluster1, cluster2, clusterMap, 1);
+                        makeMiddleExitHorizontal(cluster1, cluster2, clusterMap);
+                        makeExitHorizontal(cluster1, cluster2, clusterMap, -1);
                     }
                     if(x >= 1)
                     {
                         var cluster1 = clusters[x, y];
                         var cluster2 = clusters[x-1, y];
-                        makeExitVertical(cluster1, cluster2, map, 1);
-                        makeMiddleExitVertical(cluster1, cluster2, map);
-                        makeExitVertical(cluster1, cluster2, map, -1);
+                        makeExitVertical(cluster1, cluster2, clusterMap, 1);
+                        makeMiddleExitVertical(cluster1, cluster2, clusterMap);
+                        makeExitVertical(cluster1, cluster2, clusterMap, -1);
                     }
 
                 }
@@ -80,8 +81,9 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
 
         }
 
-        private void makeExitVertical(Cluster cluster1, Cluster cluster2, Map map, int direction)
+        private void makeExitVertical(Cluster cluster1, Cluster cluster2, ClusterMap clusters, int direction)
         {
+            var map = clusters.getMap();
             int h = cluster1.height;
             int x = cluster1.left;
             int y = (direction >= 0) ? cluster1.top : cluster1.top + h-1;
@@ -90,16 +92,19 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
             {
                 if (map.isOpen(x, y) && map.isOpen(x -1, y))
                 {
-                    cluster1.addExit(x, y);
-                    cluster2.addExit(x-1, y);
+                    var exit1 = new ExitPoint(x, y);
+                    exit1.connection = new ExitPoint(x - 1, y, exit1);
+                    cluster1.addExit(exit1);
+                    cluster2.addExit(exit1.connection);
                     return;
                 }
                 y += direction;
             }
         }
 
-        private void makeExitHorizontal(Cluster cluster1, Cluster cluster2, Map map, int direction)
+        private void makeExitHorizontal(Cluster cluster1, Cluster cluster2, ClusterMap clusters, int direction)
         {
+            var map = clusters.getMap();
             int w = cluster1.width;
             int y = cluster1.top;
             int x = (direction >= 0) ? cluster1.left : cluster1.left + w-1; 
@@ -108,16 +113,20 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
             {
                 if (map.isOpen(x, y) && map.isOpen(x, y - 1))
                 {
-                    cluster1.addExit(x, y);
-                    cluster2.addExit(x, y - 1);
+
+                    var exit1 = new ExitPoint(x, y);
+                    exit1.connection = new ExitPoint(x, y-1, exit1);
+                    cluster1.addExit(exit1);
+                    cluster2.addExit(exit1.connection);
                     return;
                 }
                 x += direction;
             }
         }
 
-        private void makeMiddleExitVertical(Cluster cluster1, Cluster cluster2, Map map)
+        private void makeMiddleExitVertical(Cluster cluster1, Cluster cluster2, ClusterMap clusters)
         {
+            var map = clusters.getMap();
             int h = cluster1.height;
             int x = cluster1.left;
             int firstOpenTop = -1;
@@ -148,14 +157,17 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
             else if (firstOpenBottom == -1) selectedY = firstOpenTop;
             else selectedY = (Math.Abs(firstOpenBottom) < Math.Abs(firstOpenTop)) ? firstOpenBottom : firstOpenTop;   //compare which side is closest to middle
 
-            cluster1.addExit(x, selectedY);
-            cluster2.addExit(x-1,selectedY);
+            var exit1 = new ExitPoint(x, selectedY);
+            exit1.connection = new ExitPoint(x - 1, selectedY, exit1);
+            cluster1.addExit(exit1);
+            cluster2.addExit(exit1.connection);
 
         }
 
 
-        private void makeMiddleExitHorizontal(Cluster cluster1, Cluster cluster2, Map map)
+        private void makeMiddleExitHorizontal(Cluster cluster1, Cluster cluster2, ClusterMap clusters)
         {
+            var map = clusters.getMap();
             int w = cluster1.width;
             int y = cluster1.top;
             int firstOpenLeft = -1;
@@ -186,8 +198,10 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
             else if(firstOpenRight == -1) selectedX = firstOpenLeft;
             else selectedX = (Math.Abs(firstOpenRight) < Math.Abs(firstOpenLeft)) ? firstOpenRight : firstOpenLeft;   //compare which side is closest to middle
 
-            cluster1.addExit(selectedX, y);
-            cluster2.addExit(selectedX, y - 1);
+            var exit1 = new ExitPoint(selectedX, y);
+            exit1.connection = new ExitPoint(selectedX, y -1, exit1);
+            cluster1.addExit(exit1);
+            cluster2.addExit(exit1.connection);
 
         }
 
@@ -213,8 +227,9 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
             return i;
         }
 
-        private void makePathsBetweenExits(Map map, Cluster[,] clusters)
+        private void makePathsBetweenExits( ClusterMap clusterMap)
         {
+            var clusters = clusterMap.getClusterMap();
             var threads = new List<Thread>();
             Stopwatch sw = new Stopwatch();
 

@@ -12,7 +12,12 @@ namespace distributed_pathfinding.Simulation
     {
 
 
-        public List<Node> SimplePath(Map map,int depth, int startX, int startY, int endX, int endY, Cluster constraint)
+        public List<Node> SimplePath(Map map, int depth, int startX, int startY, int endX, int endY, Cluster constraint)
+        {
+            return SimplePath(map, depth, map.getNode(startX, startY), map.getNode(endX, endY), constraint);
+        }
+
+        public List<Node> SimplePath(Map map,int depth, Node start, Node end, Cluster constraint)
         {
             /**
              *	this A* variant was implemented straight off of wikipedias version
@@ -24,25 +29,25 @@ namespace distributed_pathfinding.Simulation
             //Stopwatch sw = new Stopwatch();
             //sw.Start();
 
-            if (!map.isOpen(endX,endY))
+            if (!map.isOpen(end.x,end.y))
             {
                 throw new ArgumentException("Start and end nodes must be empty");
             }
             List<Node> nodes = map.getNodes();
-            int source = map.getNode(startX, startY).id;
-            int destination = map.getNode(endX, endY).id;
+            int source = start.id;
+            int destination = end.id;
 
             HashSet<int> closedSet = new HashSet<int>();
             HashSet<int> openSet = new HashSet<int>();
-            openSet.Add(map.getNode(startX,startY).id);
+            openSet.Add(start.id);
 
             Dictionary<int, int> cameFrom = new Dictionary<int, int>();
             Dictionary<int, float> gScore = new Dictionary<int, float>();
             Dictionary<int, float> fScore = new Dictionary<int, float>();
 
 
-            gScore[map.getNode(startX, startY).id] = 0.0f;
-            fScore[map.getNode(startX, startY).id] = manhattanDistance(map, source, destination);
+            gScore[start.id] = 0.0f;
+            fScore[start.id] = manhattanDistance(map, source, destination);
             int curDepth = 0;
             while (openSet.Count > 0)
             {

@@ -71,8 +71,10 @@
     <Compile Include="Networking\Host.cs" />
     <Compile Include="Simulation\ClusterPathfinding\Cluster.cs" />
     <Compile Include="Simulation\ClusterPathfinding\ClusterGenerator.cs" />
+    <Compile Include="Simulation\ClusterPathfinding\ClusterMap.cs" />
     <Compile Include="Simulation\ClusterPathfinding\ClusterPathfinding.cs" />
     <Compile Include="Simulation\ClusterPathfinding\ExitPoint.cs" />
+    <Compile Include="Simulation\ClusterPathfinding\Connection.cs" />
     <Compile Include="Simulation\Node.cs" />
     <Compile Include="Networking\CPUInfo.cs" />
     <Compile Include="Networking\CPUManager.cs" />

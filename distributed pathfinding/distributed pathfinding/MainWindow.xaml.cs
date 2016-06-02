@@ -155,8 +155,9 @@ namespace distributed_pathfinding
             Out.put("Agent drawing stopped...");
         }
 
-        private List<UIElement> drawClusters(Cluster[,] clusters)
+        private List<UIElement> drawClusters(ClusterMap clusterMap)
         {
+            var clusters = clusterMap.getClusterMap();
             var rectangles = new List<UIElement>();
             int id = 10000000;
             foreach(Cluster cluster in clusters)

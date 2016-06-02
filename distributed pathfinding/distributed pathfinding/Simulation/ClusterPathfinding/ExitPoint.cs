@@ -10,6 +10,16 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
     {
         public int x, y;
         public string id;
+        public ExitPoint connection;
+
+
+        public ExitPoint(int x, int y, ExitPoint connection)
+        {
+            this.x = x;
+            this.y = y;
+            this.id = x + "," + y;
+            this.connection = connection;
+        }
 
         public ExitPoint(int x, int y)
         {

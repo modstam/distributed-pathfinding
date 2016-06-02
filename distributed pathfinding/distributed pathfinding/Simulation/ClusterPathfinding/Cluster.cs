@@ -63,10 +63,10 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
             return null;
         }
 
-        public void addExit(int x, int y)
+        public void addExit(ExitPoint exit)
         {
-            if(!hasExit(x,y))
-                exits.Add(new ExitPoint(x, y));
+            if(!hasExit(exit.x,exit.y))
+                exits.Add(exit);
         }
 
         public bool hasExit(int x, int y)
@@ -83,6 +83,13 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
         public bool inBounds(int x, int y)
         {
             if ((x >= left && x < left + width) && (y >= top && y < top + height))
+                return true;
+            return false;
+        }
+
+        public bool inBounds(Node node)
+        {
+            if ((node.x >= left && node.x < left + width) && (node.y >= top && node.y < top + height))
                 return true;
             return false;
         }
@@ -130,6 +137,18 @@ namespace distributed_pathfinding.Simulation.ClusterPathfinding
             //}
 
         }
+
+        public List<ExitPoint> isConnected(Cluster otherCluster)
+        {
+            var connectionPoints = new List<ExitPoint>();
+            foreach(ExitPoint exit in exits)
+            {
+                if (otherCluster.inBounds(exit.connection.x, exit.connection.y))
+                    connectionPoints.Add(exit);
+            }
+
+            return connectionPoints;
+        } 
 
     }
 }
